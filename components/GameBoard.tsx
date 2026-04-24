@@ -1,28 +1,114 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { GameLegend } from "@/components/GameLegend";
 import { GuessHistory } from "@/components/GuessHistory";
 import { GuessInput } from "@/components/GuessInput";
 import { TreeView } from "@/components/TreeView";
+import { countUnrevealedHiddenNodes } from "@/lib/tree";
 import { createInitialGameState, processGuess } from "@/lib/game";
+import type { GameDifficulty, GameState } from "@/types/game";
 
 const panelClass =
   "rounded-[20px] border border-[#3a6280]/63 bg-[#0d2435]/90 p-4 shadow-[0_16px_32px_rgba(4,12,19,0.4)] backdrop-blur-sm";
 
+const difficulties: Array<{ value: GameDifficulty; label: string; hint: string }> = [
+  {
+    value: "easy",
+    label: "Facil",
+    hint: "Menos nos ocultos para aquecer.",
+  },
+  {
+    value: "medium",
+    label: "Medio",
+    hint: "Equilibrado para partidas padrao.",
+  },
+  {
+    value: "hard",
+    label: "Dificil",
+    hint: "Mais nos ocultos e mais espaco para erro.",
+  },
+];
+
 export function GameBoard() {
-  const initialState = useMemo(() => createInitialGameState(), []);
-  const [state, setState] = useState(initialState);
+  const [selectedDifficulty, setSelectedDifficulty] = useState<GameDifficulty>("medium");
+  const [activeDifficulty, setActiveDifficulty] = useState<GameDifficulty | null>(null);
+  const [state, setState] = useState<GameState | null>(null);
+
+  const startGame = (difficulty: GameDifficulty) => {
+    setActiveDifficulty(difficulty);
+    setState(createInitialGameState(difficulty));
+  };
+
+  const backToMenu = () => {
+    setState(null);
+    setActiveDifficulty(null);
+  };
+
+  if (!state) {
+    return (
+      <div className="mx-auto my-[18px] w-[94vw] max-w-[980px] sm:my-8 sm:w-[92vw]">
+        <section className="animate-in fade-in slide-in-from-bottom-2 rounded-3xl border border-[#3a6280]/65 bg-gradient-to-br from-[#163249]/88 to-[#0d2435]/92 p-5 shadow-[0_18px_40px_rgba(3,10,18,0.45)] sm:p-7">
+          <p className="m-0 text-[0.82rem] uppercase tracking-[0.06em] text-[#c8deef]">Puzzle de lógica</p>
+          <h1 className="my-2 text-[clamp(2rem,5vw,3.4rem)] leading-none">Nodele</h1>
+          <p className="m-0 max-w-[58ch] text-[clamp(1rem,2.6vw,1.12rem)] text-[#c8deef]">
+            Escolha a dificuldade para gerar uma fase aleatoria. Quanto maior a dificuldade,
+            maior a quantidade de nos ocultos.
+          </p>
+
+          <div className="mt-5 grid gap-3">
+            {difficulties.map((difficulty) => {
+              const isSelected = selectedDifficulty === difficulty.value;
+
+              return (
+                <button
+                  key={difficulty.value}
+                  type="button"
+                  onClick={() => setSelectedDifficulty(difficulty.value)}
+                  className={`cursor-pointer rounded-2xl border px-4 py-3 text-left transition ${isSelected
+                      ? "border-[#f5d56c] bg-[#f5d56c]/18"
+                      : "border-[#3f6987] bg-[#0f2b40]/68 hover:border-[#6ea9d6]"
+                    }`}
+                >
+                  <p className="m-0 text-[1rem] font-semibold">{difficulty.label}</p>
+                  <p className="mt-1 mb-0 text-[0.9rem] text-[#c5d9e9]">{difficulty.hint}</p>
+                </button>
+              );
+            })}
+          </div>
+
+          <button
+            type="button"
+            onClick={() => startGame(selectedDifficulty)}
+            className="mt-5 w-full cursor-pointer rounded-xl bg-gradient-to-br from-[#81f5c2] to-[#56dca6] px-4 py-3 font-bold text-[#08301f] transition hover:brightness-105"
+          >
+            Iniciar partida
+          </button>
+        </section>
+      </div>
+    );
+  }
 
   const lastGuess = state.guesses[state.guesses.length - 1] ?? null;
   const canHighlight = lastGuess?.result === "revealed" || lastGuess?.result === "ghost";
+  const remainingHidden = countUnrevealedHiddenNodes(state.tree);
 
   const submitGuess = (value: number) => {
-    setState((current) => processGuess(current, value));
+    setState((current) => {
+      if (!current) {
+        return current;
+      }
+
+      return processGuess(current, value);
+    });
   };
 
   const resetGame = () => {
-    setState(createInitialGameState());
+    if (!activeDifficulty) {
+      return;
+    }
+
+    setState(createInitialGameState(activeDifficulty));
   };
 
   const statusClass =
@@ -41,9 +127,15 @@ export function GameBoard() {
           Puzzle de lógica
         </p>
         <h1 className="my-2 text-[clamp(2rem,5vw,3.5rem)] leading-none">Nodele</h1>
-        <p className="m-0 text-[clamp(1rem,2.6vw,1.2rem)] text-[#c8deef]">
-          Descubra os nós ocultos da árvore binária.
-        </p>
+        <div className="flex flex-wrap items-center gap-2 text-[#c8deef]">
+          <p className="m-0 text-[clamp(1rem,2.6vw,1.2rem)]">Descubra os nos ocultos da arvore binaria.</p>
+          <span className="rounded-full border border-[#4e7896] bg-[#0c2437] px-2.5 py-1 text-[0.82rem] font-semibold uppercase tracking-[0.05em]">
+            {activeDifficulty}
+          </span>
+          <span className="rounded-full border border-[#4e7896] bg-[#0c2437] px-2.5 py-1 text-[0.82rem]">
+            {remainingHidden} ocultos restantes
+          </span>
+        </div>
       </header>
 
       <main className="mt-[18px] grid items-start gap-[18px] lg:grid-cols-[minmax(0,1.55fr)_minmax(290px,1fr)]">
@@ -70,15 +162,22 @@ export function GameBoard() {
           <section className={panelClass}>
             <h2 className="mb-3 text-[1.08rem]">Jogada</h2>
             <GuessInput disabled={state.status === "won"} onGuess={submitGuess} />
-            {state.status === "won" ? (
+            <div className="mt-2.5 grid gap-2 sm:grid-cols-2">
               <button
                 type="button"
-                className="mt-2.5 w-full cursor-pointer rounded-xl bg-gradient-to-br from-[#81f5c2] to-[#56dca6] px-3.5 py-2.5 font-bold text-[#08301f]"
+                className="w-full cursor-pointer rounded-xl bg-gradient-to-br from-[#81f5c2] to-[#56dca6] px-3.5 py-2.5 font-bold text-[#08301f]"
                 onClick={resetGame}
               >
-                Reiniciar partida
+                Nova fase
               </button>
-            ) : null}
+              <button
+                type="button"
+                className="w-full cursor-pointer rounded-xl border border-[#557a98] bg-[#163249] px-3.5 py-2.5 font-semibold text-[#d8e8f5]"
+                onClick={backToMenu}
+              >
+                Menu inicial
+              </button>
+            </div>
           </section>
 
           <section className={panelClass}>

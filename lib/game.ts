@@ -1,4 +1,4 @@
-import { initialChallenge } from "@/lib/challenges";
+import { createRandomChallenge } from "@/lib/challenges";
 import {
   allHiddenNodesRevealed,
   cloneTree,
@@ -7,10 +7,16 @@ import {
   revealHiddenNode,
   treeContainsDisplayedValue,
 } from "@/lib/tree";
-import type { GameState, GuessResult, TreeNode } from "@/types/game";
+import type { GameDifficulty, GameState, GuessResult, TreeNode } from "@/types/game";
 
-export function createInitialGameState(): GameState {
-  const baseTree = cloneTree(initialChallenge);
+const difficultyLabel: Record<GameDifficulty, string> = {
+  easy: "facil",
+  medium: "medio",
+  hard: "dificil",
+};
+
+export function createInitialGameState(difficulty: GameDifficulty = "medium"): GameState {
+  const baseTree = cloneTree(createRandomChallenge(difficulty));
 
   if (!baseTree) {
     throw new Error("A árvore inicial não pôde ser carregada.");
@@ -20,7 +26,7 @@ export function createInitialGameState(): GameState {
     tree: baseTree,
     guesses: [],
     status: "playing",
-    message: "Descubra os nós ocultos da árvore binária.",
+    message: `Descubra os nos ocultos. Dificuldade: ${difficultyLabel[difficulty]}.`,
   };
 }
 

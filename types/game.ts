@@ -1,5 +1,7 @@
 export type NodeKind = "fixed" | "hidden" | "ghost";
 
+export type GameDifficulty = "easy" | "medium" | "hard";
+
 export type TreeNode = {
   id: string;
   value: number | null;

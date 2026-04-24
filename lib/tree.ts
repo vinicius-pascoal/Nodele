@@ -140,3 +140,17 @@ export function allHiddenNodesRevealed(node: TreeNode | null): boolean {
     allHiddenNodesRevealed(node.right ?? null)
   );
 }
+
+export function countUnrevealedHiddenNodes(node: TreeNode | null): number {
+  if (!node) {
+    return 0;
+  }
+
+  const current = node.kind === "hidden" && !node.revealed ? 1 : 0;
+
+  return (
+    current +
+    countUnrevealedHiddenNodes(node.left ?? null) +
+    countUnrevealedHiddenNodes(node.right ?? null)
+  );
+}
