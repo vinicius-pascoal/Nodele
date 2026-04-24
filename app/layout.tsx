@@ -15,6 +15,9 @@ const monoFont = Fira_Code({
 export const metadata: Metadata = {
   title: "Nodele",
   description: "Descubra os nós ocultos da árvore binária.",
+  icons: {
+    icon: "/favicon.png",
+  },
 };
 
 export default function RootLayout({
