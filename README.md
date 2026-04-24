@@ -1,36 +1,78 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Nodele
 
-## Getting Started
+Nodele é um jogo de lógica com foco em árvore binária de busca. O objetivo é descobrir os nós ocultos da árvore por meio de palpites, observando como cada valor se posiciona à esquerda ou à direita de acordo com a regra da BST.
 
-First, run the development server:
+![Demo do Nodele](demo.png)
+
+## Como funciona
+
+- Cada fase gera uma árvore binária com alguns nós ocultos.
+- Ao digitar um valor, o jogo verifica se ele corresponde a um nó oculto.
+- Valores menores que o nó atual seguem para a esquerda.
+- Valores maiores que o nó atual seguem para a direita.
+- Palpites errados entram como nós fantasmas para mostrar o caminho percorrido.
+
+## Recursos
+
+- Três níveis de dificuldade.
+- Histórico de palpites.
+- Visualização da árvore com zoom.
+- Interface responsiva com visual personalizado.
+- Legenda explicando os tipos de nós e a lógica da árvore.
+
+## Tecnologias
+
+- Next.js 16
+- React 19
+- TypeScript
+- Tailwind CSS v4
+
+## Executando o projeto
+
+### Pré-requisitos
+
+- Node.js instalado
+- npm instalado
+
+### Instalação
+
+```bash
+npm install
+```
+
+### Desenvolvimento
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abra [http://localhost:3000](http://localhost:3000) no navegador.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Build de produção
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+```
 
-## Learn More
+### Iniciar versão de produção
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm run start
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Lint
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+npm run lint
+```
 
-## Deploy on Vercel
+## Estrutura principal
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- `app/` - layout global e página inicial
+- `components/` - interface do jogo
+- `lib/` - lógica da árvore, fases e estado do jogo
+- `public/` - imagens e assets estáticos
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Licença
+
+Projeto pessoal para estudo e experimentação com árvores binárias e interface de jogo.
