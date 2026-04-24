@@ -25,7 +25,11 @@ function buildLayout(root: TreeNode): LayoutNode[] {
   const nodes: LayoutNode[] = [];
   let cursor = 0;
 
-  const walk = (node: TreeNode | null | undefined, depth: number, parentId: string | null) => {
+  const walk = (
+    node: TreeNode | null | undefined,
+    depth: number,
+    parentId: string | null,
+  ) => {
     if (!node) {
       return;
     }
@@ -68,9 +72,14 @@ export function TreeView({ tree, highlightValue = null, highlightKind = null }: 
   }));
 
   return (
-    <div className="tree-scroll-area">
-      <div className="tree-canvas" style={{ width, height }}>
-        <svg className="tree-lines" width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
+    <div className="mt-3.5 flex-1 overflow-x-auto overflow-y-hidden rounded-[14px] border border-[#3a6280]/58 bg-gradient-to-b from-[rgba(5,15,24,0.76)] to-[rgba(6,18,29,0.7)]">
+      <div className="relative" style={{ width, height }}>
+        <svg
+          className="pointer-events-none absolute inset-0"
+          width={width}
+          height={height}
+          viewBox={`0 0 ${width} ${height}`}
+        >
           {positioned.map((item) => {
             if (!item.parentId) {
               return null;
@@ -88,7 +97,9 @@ export function TreeView({ tree, highlightValue = null, highlightKind = null }: 
                 y1={parent.py + NODE_RADIUS}
                 x2={item.px}
                 y2={item.py - NODE_RADIUS}
-                className="tree-line"
+                stroke="rgba(146,190,229,0.72)"
+                strokeWidth={2.2}
+                strokeLinecap="round"
               />
             );
           })}
@@ -104,7 +115,7 @@ export function TreeView({ tree, highlightValue = null, highlightKind = null }: 
           return (
             <div
               key={item.id}
-              className="tree-node-wrapper"
+              className="absolute -translate-x-1/2 -translate-y-1/2"
               style={{ left: item.px, top: item.py }}
             >
               <TreeNodeView node={item.node} isHighlighted={shouldHighlight} />

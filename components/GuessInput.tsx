@@ -27,23 +27,27 @@ export function GuessInput({ disabled = false, onGuess }: GuessInputProps) {
   };
 
   return (
-    <form className="guess-form" onSubmit={submit}>
-      <label htmlFor="guess-input" className="guess-label">
+    <form className="grid gap-2" onSubmit={submit}>
+      <label htmlFor="guess-input" className="text-[0.95rem] text-[#d3e5f3]">
         Seu palpite
       </label>
-      <div className="guess-controls">
+      <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto]">
         <input
           id="guess-input"
           type="number"
           inputMode="numeric"
-          className="guess-input"
+          className="rounded-xl border border-[#4f7390] bg-[#071825] px-3 py-2.5 text-base text-[#e6f2fb] placeholder:text-[#88a9c0] focus:border-[#f5d56c] focus:outline-none focus:ring-3 focus:ring-[#f5d56c]/20"
           placeholder="Ex.: 30"
           value={value}
           onChange={(event) => setValue(event.target.value)}
           disabled={disabled}
           required
         />
-        <button type="submit" className="guess-button" disabled={disabled}>
+        <button
+          type="submit"
+          className="cursor-pointer rounded-xl bg-gradient-to-br from-[#f5d56c] to-[#f0b63f] px-4 py-2.5 font-bold text-[#102434] transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-50"
+          disabled={disabled}
+        >
           Inserir
         </button>
       </div>

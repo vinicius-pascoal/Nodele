@@ -9,22 +9,34 @@ export function TreeNodeView({ node, isHighlighted = false }: TreeNodeViewProps)
   const isHiddenNode = node.kind === "hidden" && !node.revealed;
   const label = isHiddenNode ? "?" : String(node.value ?? node.realValue ?? "?");
 
-  let className = "tree-node tree-node-fixed";
+  const baseClass =
+    "grid place-items-center rounded-full font-mono font-bold tracking-[0.01em] transition-transform duration-200";
+
+  let className =
+    `${baseClass} h-[58px] w-[58px] border border-[#6ea9d6] bg-gradient-to-br from-[#12344b] to-[#0f2a3f] text-[1.05rem] text-[#eaf3fb]`;
 
   if (node.kind === "hidden" && !node.revealed) {
-    className = "tree-node tree-node-hidden";
+    className =
+      `${baseClass} h-[58px] w-[58px] border-2 border-dashed border-[#f5d56c] bg-gradient-to-br from-[#1c252e] to-[#111d27] text-[1.05rem] text-[#ffe8a3]`;
   }
 
   if (node.kind === "ghost") {
-    className = "tree-node tree-node-ghost";
+    className =
+      `${baseClass} h-[50px] w-[50px] border border-dashed border-[#8cc4ff]/65 bg-[#8cc4ff]/16 text-[1.02rem] text-[#cee7ff] opacity-80`;
   }
 
   if (isHighlighted && node.kind !== "ghost") {
-    className += " tree-node-highlight";
+    className += " scale-105 ring-4 ring-emerald-300/40";
   }
 
   if (isHighlighted && node.kind === "ghost") {
-    className += " tree-node-ghost-new";
+    className += " -translate-y-0.5 ring-2 ring-sky-300/40";
+  }
+
+  className += " max-sm:h-[52px] max-sm:w-[52px]";
+
+  if (node.kind === "ghost") {
+    className += " max-sm:h-[45px] max-sm:w-[45px]";
   }
 
   const accessibleLabel = isHiddenNode
