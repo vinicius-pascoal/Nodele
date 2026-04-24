@@ -66,8 +66,8 @@ export function GameBoard() {
                   type="button"
                   onClick={() => setSelectedDifficulty(difficulty.value)}
                   className={`cursor-pointer rounded-2xl border px-4 py-3 text-left transition ${isSelected
-                      ? "border-[#f5d56c] bg-[#f5d56c]/18"
-                      : "border-[#3f6987] bg-[#0f2b40]/68 hover:border-[#6ea9d6]"
+                    ? "border-[#f5d56c] bg-[#f5d56c]/18"
+                    : "border-[#3f6987] bg-[#0f2b40]/68 hover:border-[#6ea9d6]"
                     }`}
                 >
                   <p className="m-0 text-[1rem] font-semibold">{difficulty.label}</p>
@@ -151,6 +151,7 @@ export function GameBoard() {
             tree={state.tree}
             highlightValue={canHighlight ? (lastGuess?.value ?? null) : null}
             highlightKind={highlightKind}
+            animationTick={state.guesses.length}
           />
 
           <div className={statusClass} role="status" aria-live="polite">

@@ -16,17 +16,25 @@ type TreeViewProps = {
   tree: TreeNode;
   highlightValue?: number | null;
   highlightKind?: "revealed" | "ghost" | null;
+  animationTick?: number;
 };
 
 const NODE_STEP_X = 88;
 const NODE_STEP_Y = 100;
-const NODE_RADIUS = 24;
 const PADDING_X = 44;
 const PADDING_Y = 36;
 const FRAME_PADDING = 16;
 const MIN_ZOOM = 0.8;
 const MAX_ZOOM = 2;
 const ZOOM_STEP = 0.2;
+
+function resolveNodeRadius(node: TreeNode): number {
+  if (node.kind === "ghost") {
+    return 25;
+  }
+
+  return 29;
+}
 
 function buildLayout(root: TreeNode): LayoutNode[] {
   const nodes: LayoutNode[] = [];
@@ -59,7 +67,12 @@ function buildLayout(root: TreeNode): LayoutNode[] {
   return nodes;
 }
 
-export function TreeView({ tree, highlightValue = null, highlightKind = null }: TreeViewProps) {
+export function TreeView({
+  tree,
+  highlightValue = null,
+  highlightKind = null,
+  animationTick = 0,
+}: TreeViewProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [containerWidth, setContainerWidth] = useState(0);
   const [zoom, setZoom] = useState(1);
@@ -84,21 +97,6 @@ export function TreeView({ tree, highlightValue = null, highlightKind = null }: 
 
   const layout = useMemo(() => buildLayout(tree), [tree]);
 
-  if (layout.length === 0) {
-    return null;
-  }
-
-  const maxX = Math.max(...layout.map((n) => n.x));
-  const maxY = Math.max(...layout.map((n) => n.y));
-
-  const width = (maxX + 1) * NODE_STEP_X + PADDING_X * 2;
-  const height = (maxY + 1) * NODE_STEP_Y + PADDING_Y * 2;
-  const availableWidth = Math.max(containerWidth - FRAME_PADDING * 2, 0);
-  const fitScale = availableWidth > 0 ? Math.min(1, availableWidth / width) : 1;
-  const scale = fitScale * zoom;
-  const scaledWidth = width * scale;
-  const scaledHeight = height * scale;
-
   const positioned = useMemo(
     () =>
       layout.map((item) => ({
@@ -113,6 +111,33 @@ export function TreeView({ tree, highlightValue = null, highlightKind = null }: 
     () => new Map(positioned.map((node) => [node.id, node])),
     [positioned],
   );
+
+  const drawOrderById = useMemo(() => {
+    const ordered = [...positioned].sort((a, b) => {
+      if (a.y !== b.y) {
+        return a.y - b.y;
+      }
+
+      return a.x - b.x;
+    });
+
+    return new Map(ordered.map((item, index) => [item.id, index]));
+  }, [positioned]);
+
+  if (layout.length === 0) {
+    return null;
+  }
+
+  const maxX = Math.max(...layout.map((n) => n.x));
+  const maxY = Math.max(...layout.map((n) => n.y));
+
+  const width = (maxX + 1) * NODE_STEP_X + PADDING_X * 2;
+  const height = (maxY + 1) * NODE_STEP_Y + PADDING_Y * 2;
+  const availableWidth = Math.max(containerWidth - FRAME_PADDING * 2, 0);
+  const fitScale = availableWidth > 0 ? Math.min(1, availableWidth / width) : 1;
+  const scale = fitScale * zoom;
+  const scaledWidth = width * scale;
+  const scaledHeight = height * scale;
 
   const decreaseZoom = () => {
     setZoom((current) => Math.max(MIN_ZOOM, Number((current - ZOOM_STEP).toFixed(2))));
@@ -163,6 +188,7 @@ export function TreeView({ tree, highlightValue = null, highlightKind = null }: 
 
       <div className="mx-auto" style={{ width: scaledWidth || width, height: scaledHeight || height }}>
         <div
+          key={animationTick}
           className="relative origin-top-left"
           style={{ width, height, transform: `scale(${scale})` }}
         >
@@ -182,16 +208,43 @@ export function TreeView({ tree, highlightValue = null, highlightKind = null }: 
                 return null;
               }
 
+              const drawStep = drawOrderById.get(item.id) ?? 0;
+              const delayMs = drawStep * 95;
+              const dx = item.px - parent.px;
+              const dy = item.py - parent.py;
+              const centerDistance = Math.hypot(dx, dy);
+
+              if (centerDistance === 0) {
+                return null;
+              }
+
+              const ux = dx / centerDistance;
+              const uy = dy / centerDistance;
+              const parentRadius = resolveNodeRadius(parent.node);
+              const childRadius = resolveNodeRadius(item.node);
+
+              const x1 = parent.px + ux * parentRadius;
+              const y1 = parent.py + uy * parentRadius;
+              const x2 = item.px - ux * childRadius;
+              const y2 = item.py - uy * childRadius;
+              const lineLength = Math.hypot(x2 - x1, y2 - y1);
+
               return (
                 <line
                   key={`${item.id}-line`}
-                  x1={parent.px}
-                  y1={parent.py + NODE_RADIUS}
-                  x2={item.px}
-                  y2={item.py - NODE_RADIUS}
+                  className="tree-line-draw"
+                  x1={x1}
+                  y1={y1}
+                  x2={x2}
+                  y2={y2}
                   stroke="rgba(146,190,229,0.72)"
                   strokeWidth={2.2}
                   strokeLinecap="round"
+                  style={{
+                    strokeDasharray: lineLength,
+                    strokeDashoffset: lineLength,
+                    animationDelay: `${delayMs}ms`,
+                  }}
                 />
               );
             })}
@@ -207,8 +260,12 @@ export function TreeView({ tree, highlightValue = null, highlightKind = null }: 
             return (
               <div
                 key={item.id}
-                className="absolute -translate-x-1/2 -translate-y-1/2"
-                style={{ left: item.px, top: item.py }}
+                className="tree-node-draw absolute"
+                style={{
+                  left: item.px,
+                  top: item.py,
+                  animationDelay: `${(drawOrderById.get(item.id) ?? 0) * 95 + 55}ms`,
+                }}
               >
                 <TreeNodeView node={item.node} isHighlighted={shouldHighlight} />
               </div>

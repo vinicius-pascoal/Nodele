@@ -1,1 +1,57 @@
 @import "tailwindcss";
+
+@keyframes tree-line-draw {
+  0% {
+    stroke-dashoffset: var(--line-length, 1);
+    opacity: 0.2;
+  }
+
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}
+
+@keyframes tree-node-pop {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.35);
+    filter: blur(1px);
+  }
+
+  72% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.08);
+    filter: blur(0);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+    filter: blur(0);
+  }
+}
+
+.tree-line-draw {
+  animation: tree-line-draw 250ms ease-out forwards;
+  will-change: stroke-dashoffset, opacity;
+}
+
+.tree-node-draw {
+  animation: tree-node-pop 300ms cubic-bezier(0.26, 0.92, 0.33, 1) forwards;
+  will-change: transform, opacity, filter;
+  opacity: 0;
+  transform: translate(-50%, -50%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .tree-line-draw,
+  .tree-node-draw {
+    animation: none;
+  }
+
+  .tree-node-draw {
+    opacity: 1;
+  }
+}
