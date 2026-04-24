@@ -27,7 +27,7 @@ export default function RootLayout({
       lang="pt-BR"
       className={`${displayFont.variable} ${monoFont.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col bg-[radial-gradient(1200px_600px_at_8%_-10%,#1e4764_0%,transparent_55%),radial-gradient(900px_500px_at_95%_2%,#133149_0%,transparent_50%),linear-gradient(160deg,#07121c_0%,#091827_50%,#05121c_100%)] font-[var(--font-display)] text-[#e8f1f7]">
+      <body className="flex min-h-full flex-col font-[var(--font-display)] text-[#e8f1f7]">
         {children}
       </body>
     </html>

@@ -1,5 +1,66 @@
 @import "tailwindcss";
 
+html,
+body {
+  min-height: 100%;
+  background-color: #07121c;
+  background-image: url("/fundo.svg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  background-attachment: scroll;
+}
+
+:root {
+  --scrollbar-track: #0a1a28;
+  --scrollbar-track-soft: #0f2434;
+  --scrollbar-thumb: #4f7f9f;
+  --scrollbar-thumb-soft: #6ea9d6;
+  --scrollbar-thumb-hover: #5d90b1;
+  --scrollbar-thumb-hover-soft: #89bfe8;
+}
+
+html,
+body,
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb-soft) var(--scrollbar-track);
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+*::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+html::-webkit-scrollbar-track,
+body::-webkit-scrollbar-track,
+*::-webkit-scrollbar-track {
+  background: linear-gradient(180deg, var(--scrollbar-track-soft) 0%, var(--scrollbar-track) 100%);
+  border-radius: 999px;
+}
+
+html::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-thumb,
+*::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--scrollbar-thumb-soft) 0%, var(--scrollbar-thumb) 100%);
+  border: 2px solid var(--scrollbar-track);
+  border-radius: 999px;
+}
+
+html::-webkit-scrollbar-thumb:hover,
+body::-webkit-scrollbar-thumb:hover,
+*::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--scrollbar-thumb-hover-soft) 0%, var(--scrollbar-thumb-hover) 100%);
+}
+
+html::-webkit-scrollbar-corner,
+body::-webkit-scrollbar-corner,
+*::-webkit-scrollbar-corner {
+  background: var(--scrollbar-track);
+}
+
 @keyframes tree-line-draw {
   0% {
     stroke-dashoffset: var(--line-length, 1);
