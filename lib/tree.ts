@@ -126,6 +126,44 @@ export function insertGhostNode(node: TreeNode, value: number): TreeNode {
   return node;
 }
 
+function collectInOrder(node: TreeNode | null, acc: TreeNode[] = []): TreeNode[] {
+  if (!node) {
+    return acc;
+  }
+
+  collectInOrder(node.left ?? null, acc);
+  acc.push(node);
+  collectInOrder(node.right ?? null, acc);
+
+  return acc;
+}
+
+function buildBalancedFromSorted(nodes: TreeNode[], start: number, end: number): TreeNode | null {
+  if (start > end) {
+    return null;
+  }
+
+  const middle = Math.floor((start + end) / 2);
+  const root = nodes[middle];
+
+  return {
+    ...root,
+    left: buildBalancedFromSorted(nodes, start, middle - 1),
+    right: buildBalancedFromSorted(nodes, middle + 1, end),
+  };
+}
+
+export function balanceTree(node: TreeNode): TreeNode {
+  const orderedNodes = collectInOrder(node, []);
+  const balanced = buildBalancedFromSorted(orderedNodes, 0, orderedNodes.length - 1);
+
+  if (!balanced) {
+    return node;
+  }
+
+  return balanced;
+}
+
 export function allHiddenNodesRevealed(node: TreeNode | null): boolean {
   if (!node) {
     return true;

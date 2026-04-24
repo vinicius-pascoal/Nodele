@@ -1,6 +1,7 @@
 import { createRandomChallenge } from "@/lib/challenges";
 import {
   allHiddenNodesRevealed,
+  balanceTree,
   cloneTree,
   findHiddenNodeByValue,
   insertGhostNode,
@@ -68,6 +69,8 @@ export function processGuess(state: GameState, value: number): GameState {
     result = "ghost";
     message = "Esse valor não era oculto e entrou como nó fantasma.";
   }
+
+  nextTree = balanceTree(nextTree);
 
   const nextStatus = allHiddenNodesRevealed(nextTree) ? "won" : "playing";
 
