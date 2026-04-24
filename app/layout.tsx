@@ -30,8 +30,20 @@ export default function RootLayout({
       lang="pt-BR"
       className={`${displayFont.variable} ${monoFont.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col font-[var(--font-display)] text-[#e8f1f7]">
-        {children}
+      <body className="flex min-h-screen flex-col font-[var(--font-display)] text-[#e8f1f7]">
+        <main className="flex-1">
+          {children}
+        </main>
+        <footer className="border-t border-[#3a6280]/45 bg-[#0a1a28]/70 px-4 py-4 text-center text-[0.9rem] text-[#c8deef] sm:px-6">
+          Desenvolvido por: <a
+            href="https://github.com/vinicius-pascoal"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-semibold text-[#81f5c2] underline decoration-[#81f5c2]/60 underline-offset-3 transition hover:text-[#a8f8d5]"
+          >
+            vinicius pascoal
+          </a>
+        </footer>
       </body>
     </html>
   );
