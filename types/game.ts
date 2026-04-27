@@ -26,5 +26,6 @@ export type GameState = {
   tree: TreeNode;
   guesses: Guess[];
   status: GameStatus;
+  autoBalance: boolean;
   message?: string;
 };

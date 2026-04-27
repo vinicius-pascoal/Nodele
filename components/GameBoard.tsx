@@ -32,12 +32,15 @@ const difficulties: Array<{ value: GameDifficulty; label: string; hint: string }
 
 export function GameBoard() {
   const [selectedDifficulty, setSelectedDifficulty] = useState<GameDifficulty>("medium");
+  const [selectedAutoBalance, setSelectedAutoBalance] = useState(true);
   const [activeDifficulty, setActiveDifficulty] = useState<GameDifficulty | null>(null);
+  const [activeAutoBalance, setActiveAutoBalance] = useState(true);
   const [state, setState] = useState<GameState | null>(null);
 
-  const startGame = (difficulty: GameDifficulty) => {
+  const startGame = (difficulty: GameDifficulty, autoBalance: boolean) => {
     setActiveDifficulty(difficulty);
-    setState(createInitialGameState(difficulty));
+    setActiveAutoBalance(autoBalance);
+    setState(createInitialGameState(difficulty, { autoBalance }));
   };
 
   const backToMenu = () => {
@@ -77,9 +80,53 @@ export function GameBoard() {
             })}
           </div>
 
+          <label className="mt-4 flex items-center justify-between gap-3 rounded-2xl border border-[#3f6987] bg-[#0f2b40]/68 px-4 py-3">
+            <div>
+              <div className="flex items-center gap-2">
+                <p className="m-0 text-[0.95rem] font-semibold text-[#e7f2fb]">Auto balancear arvore</p>
+                <span className="group relative inline-flex">
+                  <button
+                    type="button"
+                    tabIndex={0}
+                    aria-label="Explicacao do auto balanceamento"
+                    className="grid h-5 w-5 place-items-center rounded-full border border-[#5a85a6] bg-[#163249] text-[0.72rem] font-bold text-[#d8e8f5]"
+                  >
+                    ?
+                  </button>
+                  <span
+                    role="tooltip"
+                    className="pointer-events-none absolute right-0 top-[calc(100%+8px)] z-10 w-[250px] rounded-xl border border-[#5a85a6] bg-[#0a2233] px-3 py-2 text-[0.76rem] leading-[1.35] text-[#deedf8] opacity-0 shadow-[0_12px_24px_rgba(2,8,14,0.55)] transition-opacity duration-150 group-hover:opacity-100 group-focus-within:opacity-100"
+                  >
+                    Ligado: a arvore e reorganizada apos cada jogada para ficar mais equilibrada. Desligado: a estrutura cresce naturalmente como BST.
+                  </span>
+                </span>
+              </div>
+              <p className="mt-1 mb-0 text-[0.84rem] text-[#b8d0e3]">
+                Reorganiza a arvore automaticamente a cada jogada.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              role="switch"
+              aria-checked={selectedAutoBalance}
+              aria-label="Alternar auto balanceamento"
+              onClick={() => setSelectedAutoBalance((current) => !current)}
+              className={`relative h-8 w-14 shrink-0 cursor-pointer overflow-hidden rounded-full border transition-colors ${selectedAutoBalance
+                ? "border-[#7ee9b8] bg-[#1d6f4f]"
+                : "border-[#5d7f99] bg-[#173449]"
+                }`}
+            >
+              <span
+                className={`absolute top-1 left-1 h-5 w-5 rounded-full bg-[#ecf5fc] shadow-[0_2px_8px_rgba(1,10,18,0.45)] transition-transform ${selectedAutoBalance ? "translate-x-7" : "translate-x-0"
+                  }`}
+              />
+            </button>
+          </label>
+
           <button
             type="button"
-            onClick={() => startGame(selectedDifficulty)}
+            onClick={() => startGame(selectedDifficulty, selectedAutoBalance)}
             className="mt-5 w-full cursor-pointer rounded-xl bg-gradient-to-br from-[#81f5c2] to-[#56dca6] px-4 py-3 font-bold text-[#08301f] transition hover:brightness-105"
           >
             Iniciar partida
@@ -108,7 +155,7 @@ export function GameBoard() {
       return;
     }
 
-    setState(createInitialGameState(activeDifficulty));
+    setState(createInitialGameState(activeDifficulty, { autoBalance: activeAutoBalance }));
   };
 
   const statusClass =
@@ -134,6 +181,9 @@ export function GameBoard() {
           </span>
           <span className="rounded-full border border-[#4e7896] bg-[#0c2437] px-2.5 py-1 text-[0.82rem]">
             {remainingHidden} ocultos restantes
+          </span>
+          <span className="rounded-full border border-[#4e7896] bg-[#0c2437] px-2.5 py-1 text-[0.82rem]">
+            Auto balancear: {state.autoBalance ? "on" : "off"}
           </span>
         </div>
       </header>

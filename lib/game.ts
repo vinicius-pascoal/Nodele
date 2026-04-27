@@ -16,8 +16,16 @@ const difficultyLabel: Record<GameDifficulty, string> = {
   hard: "dificil",
 };
 
-export function createInitialGameState(difficulty: GameDifficulty = "medium"): GameState {
+type CreateGameOptions = {
+  autoBalance?: boolean;
+};
+
+export function createInitialGameState(
+  difficulty: GameDifficulty = "medium",
+  options: CreateGameOptions = {},
+): GameState {
   const baseTree = cloneTree(createRandomChallenge(difficulty));
+  const autoBalance = options.autoBalance ?? true;
 
   if (!baseTree) {
     throw new Error("A árvore inicial não pôde ser carregada.");
@@ -27,7 +35,8 @@ export function createInitialGameState(difficulty: GameDifficulty = "medium"): G
     tree: baseTree,
     guesses: [],
     status: "playing",
-    message: `Descubra os nos ocultos. Dificuldade: ${difficultyLabel[difficulty]}.`,
+    autoBalance,
+    message: `Descubra os nos ocultos. Dificuldade: ${difficultyLabel[difficulty]}. Balanceamento automatico: ${autoBalance ? "ligado" : "desligado"}.`,
   };
 }
 
@@ -70,7 +79,9 @@ export function processGuess(state: GameState, value: number): GameState {
     message = "Esse valor não era oculto e entrou como nó fantasma.";
   }
 
-  nextTree = balanceTree(nextTree);
+  if (state.autoBalance) {
+    nextTree = balanceTree(nextTree);
+  }
 
   const nextStatus = allHiddenNodesRevealed(nextTree) ? "won" : "playing";
 
@@ -81,6 +92,7 @@ export function processGuess(state: GameState, value: number): GameState {
   return {
     tree: nextTree,
     status: nextStatus,
+    autoBalance: state.autoBalance,
     guesses: [
       ...state.guesses,
       {
