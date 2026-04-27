@@ -140,11 +140,8 @@ export function GameBoard() {
 
       <main className="mt-[18px] grid items-start gap-[18px] lg:grid-cols-[minmax(0,1.55fr)_minmax(290px,1fr)]">
         <section className={`${panelClass} flex min-h-[430px] flex-col lg:min-h-[500px]`}>
-          <div>
-            <h2 className="mb-1 text-[1.08rem]">Árvore</h2>
-            <p className="m-0 text-[0.95rem] text-[#c0d5e6]">
-              Palpite um valor por rodada e observe como ele se posiciona na BST.
-            </p>
+          <div className={statusClass} role="status" aria-live="polite">
+            {state.message}
           </div>
 
           <TreeView
@@ -154,9 +151,7 @@ export function GameBoard() {
             animationTick={state.guesses.length}
           />
 
-          <div className={statusClass} role="status" aria-live="polite">
-            {state.message}
-          </div>
+
         </section>
 
         <aside className="grid gap-[14px]">
