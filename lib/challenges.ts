@@ -28,7 +28,7 @@ function pickUniqueValues(count: number): number[] {
   const values = new Set<number>();
 
   while (values.size < count) {
-    values.add(randomInt(10, 98));
+    values.add(randomInt(1, 99));
   }
 
   return [...values];

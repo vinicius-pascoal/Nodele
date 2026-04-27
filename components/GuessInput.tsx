@@ -22,6 +22,10 @@ export function GuessInput({ disabled = false, onGuess }: GuessInputProps) {
       return;
     }
 
+    if (parsed < 1 || parsed > 99) {
+      return;
+    }
+
     onGuess(parsed);
     setValue("");
   };
@@ -36,6 +40,9 @@ export function GuessInput({ disabled = false, onGuess }: GuessInputProps) {
           id="guess-input"
           type="number"
           inputMode="numeric"
+          min={1}
+          max={99}
+          step={1}
           className="rounded-xl border border-[#4f7390] bg-[#071825] px-3 py-2.5 text-base text-[#e6f2fb] placeholder:text-[#88a9c0] focus:border-[#f5d56c] focus:outline-none focus:ring-3 focus:ring-[#f5d56c]/20"
           placeholder="Ex.: 30"
           value={value}
