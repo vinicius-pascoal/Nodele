@@ -14,35 +14,35 @@ export function TreeNodeView({ node, isHighlighted = false }: TreeNodeViewProps)
     "grid place-items-center rounded-full font-mono font-bold tracking-[0.01em] transition-transform duration-200";
 
   let className =
-    `${baseClass} h-[58px] w-[58px] border border-[#6ea9d6] bg-gradient-to-br from-[#12344b] to-[#0f2a3f] text-[1.05rem] text-[#eaf3fb]`;
+    `${baseClass} h-[66px] w-[66px] border-2 border-[#78b3df] bg-gradient-to-br from-[#12344b] to-[#0f2a3f] text-[1.08rem] text-[#f0f7fd] shadow-[0_8px_18px_rgba(0,0,0,0.34)]`;
 
   if (node.kind === "hidden" && !node.revealed) {
     className =
-      `${baseClass} h-[58px] w-[58px] border-2 border-dashed border-[#f5d56c] bg-gradient-to-br from-[#1c252e] to-[#111d27] text-[1.05rem] text-[#ffe8a3]`;
+      `${baseClass} h-[66px] w-[66px] border-[3px] border-dashed border-[#f5d56c] bg-gradient-to-br from-[#1c252e] to-[#111d27] text-[1.08rem] text-[#ffe8a3] shadow-[0_8px_18px_rgba(0,0,0,0.3)]`;
   }
 
   if (isRevealedHiddenNode) {
     className =
-      `${baseClass} h-[58px] w-[58px] border border-[#47b37a] bg-gradient-to-br from-[#1f6b44] to-[#164f34] text-[1.05rem] text-[#e7fff0]`;
+      `${baseClass} h-[66px] w-[66px] border-2 border-[#47b37a] bg-gradient-to-br from-[#1f6b44] to-[#164f34] text-[1.08rem] text-[#e7fff0] shadow-[0_8px_18px_rgba(0,0,0,0.34)]`;
   }
 
   if (node.kind === "ghost") {
     className =
-      `${baseClass} h-[50px] w-[50px] border border-dashed border-[#8cc4ff]/65 bg-[#8cc4ff]/16 text-[1.02rem] text-[#cee7ff] opacity-80`;
+      `${baseClass} h-[56px] w-[56px] border-[2px] border-dashed border-[#8cc4ff]/72 bg-[#8cc4ff]/16 text-[1.02rem] text-[#cee7ff] opacity-84 shadow-[0_6px_14px_rgba(0,0,0,0.26)]`;
   }
 
   if (isHighlighted && node.kind !== "ghost") {
-    className += " scale-105 ring-4 ring-emerald-300/40";
+    className += " scale-105 ring-4 ring-emerald-300/40 shadow-[0_10px_22px_rgba(0,0,0,0.38)]";
   }
 
   if (isHighlighted && node.kind === "ghost") {
-    className += " -translate-y-0.5 ring-2 ring-sky-300/40";
+    className += " -translate-y-0.5 ring-2 ring-sky-300/40 shadow-[0_8px_16px_rgba(0,0,0,0.3)]";
   }
 
-  className += " max-sm:h-[52px] max-sm:w-[52px]";
+  className += " max-sm:h-[58px] max-sm:w-[58px]";
 
   if (node.kind === "ghost") {
-    className += " max-sm:h-[45px] max-sm:w-[45px]";
+    className += " max-sm:h-[50px] max-sm:w-[50px]";
   }
 
   const accessibleLabel = isHiddenNode

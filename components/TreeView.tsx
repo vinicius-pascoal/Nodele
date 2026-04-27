@@ -30,10 +30,10 @@ const ZOOM_STEP = 0.2;
 
 function resolveNodeRadius(node: TreeNode): number {
   if (node.kind === "ghost") {
-    return 25;
+    return 28;
   }
 
-  return 29;
+  return 33;
 }
 
 function buildLayout(root: TreeNode): LayoutNode[] {
