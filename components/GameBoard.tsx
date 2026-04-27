@@ -182,11 +182,6 @@ export function GameBoard() {
           </section>
 
           <section className={panelClass}>
-            <h2 className="mb-3 text-[1.08rem]">Histórico de palpites</h2>
-            <GuessHistory guesses={state.guesses} />
-          </section>
-
-          <section className={panelClass}>
             <h2 className="mb-3 text-[1.08rem]">Legenda</h2>
             <GameLegend />
           </section>

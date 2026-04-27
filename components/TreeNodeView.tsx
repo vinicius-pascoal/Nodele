@@ -7,6 +7,7 @@ type TreeNodeViewProps = {
 
 export function TreeNodeView({ node, isHighlighted = false }: TreeNodeViewProps) {
   const isHiddenNode = node.kind === "hidden" && !node.revealed;
+  const isRevealedHiddenNode = node.kind === "fixed" && node.revealed;
   const label = isHiddenNode ? "?" : String(node.value ?? node.realValue ?? "?");
 
   const baseClass =
@@ -18,6 +19,11 @@ export function TreeNodeView({ node, isHighlighted = false }: TreeNodeViewProps)
   if (node.kind === "hidden" && !node.revealed) {
     className =
       `${baseClass} h-[58px] w-[58px] border-2 border-dashed border-[#f5d56c] bg-gradient-to-br from-[#1c252e] to-[#111d27] text-[1.05rem] text-[#ffe8a3]`;
+  }
+
+  if (isRevealedHiddenNode) {
+    className =
+      `${baseClass} h-[58px] w-[58px] border border-[#47b37a] bg-gradient-to-br from-[#1f6b44] to-[#164f34] text-[1.05rem] text-[#e7fff0]`;
   }
 
   if (node.kind === "ghost") {
