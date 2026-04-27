@@ -1,6 +1,6 @@
 export type NodeKind = "fixed" | "hidden" | "ghost";
 
-export type GameDifficulty = "easy" | "medium" | "hard";
+export type GameDifficulty = "easy" | "medium" | "hard" | "brutal";
 
 export type TreeNode = {
   id: string;

@@ -299,7 +299,7 @@ export function TreeView({
 
       <div
         ref={containerRef}
-        className="mx-auto overflow-auto cursor-grab select-none touch-none rounded-[12px]"
+        className="mx-auto max-h-[68vh] overflow-auto cursor-grab select-none touch-none rounded-[12px] lg:max-h-[620px]"
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={endDragging}

@@ -3,6 +3,7 @@ import type { GameDifficulty, TreeNode } from "@/types/game";
 type DifficultyConfig = {
   totalNodes: number;
   hiddenNodes: number;
+  includeRootInHidden?: boolean;
 };
 
 const difficultyConfig: Record<GameDifficulty, DifficultyConfig> = {
@@ -17,6 +18,11 @@ const difficultyConfig: Record<GameDifficulty, DifficultyConfig> = {
   hard: {
     totalNodes: 11,
     hiddenNodes: 6,
+  },
+  brutal: {
+    totalNodes: 8,
+    hiddenNodes: 8,
+    includeRootInHidden: true,
   },
 };
 
@@ -118,7 +124,9 @@ export function createRandomChallenge(difficulty: GameDifficulty): TreeNode {
     throw new Error("A fase aleatoria nao pode ser criada.");
   }
 
-  const candidateIds = collectIds(baseTree).filter((id) => id !== baseTree.id);
+  const candidateIds = collectIds(baseTree).filter(
+    (id) => config.includeRootInHidden || id !== baseTree.id,
+  );
   const hiddenCount = Math.min(config.hiddenNodes, candidateIds.length);
   const hiddenIds = new Set(shuffle(candidateIds).slice(0, hiddenCount));
 

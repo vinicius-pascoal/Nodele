@@ -27,6 +27,11 @@ const difficulties: Array<{ value: GameDifficulty; label: string; hint: string }
     label: "Dificil",
     hint: "Mais nos ocultos e mais espaco para erro.",
   },
+  {
+    value: "brutal",
+    label: "Brutal",
+    hint: "Comeca com 8 nos ocultos e nenhum no visivel.",
+  },
 ];
 
 export function GameBoard() {

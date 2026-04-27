@@ -14,6 +14,7 @@ const difficultyLabel: Record<GameDifficulty, string> = {
   easy: "facil",
   medium: "medio",
   hard: "dificil",
+  brutal: "brutal",
 };
 
 type CreateGameOptions = {
