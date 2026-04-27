@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { GameLegend } from "@/components/GameLegend";
-import { GuessHistory } from "@/components/GuessHistory";
 import { GuessInput } from "@/components/GuessInput";
 import { TreeView } from "@/components/TreeView";
 import { countUnrevealedHiddenNodes } from "@/lib/tree";
@@ -59,70 +58,84 @@ export function GameBoard() {
             maior a quantidade de nos ocultos.
           </p>
 
-          <div className="mt-5 grid gap-3">
-            {difficulties.map((difficulty) => {
-              const isSelected = selectedDifficulty === difficulty.value;
+          <div className="mt-6 grid gap-4 sm:gap-5">
+            <section className="rounded-2xl border border-[#3f6987]/80 bg-[#0f2b40]/62 p-4">
+              <div className="mb-3 flex items-center justify-between gap-2">
+                <h2 className="m-0 text-[0.98rem] font-semibold text-[#e7f2fb]">Dificuldade</h2>
+              </div>
 
-              return (
+              <div className="grid gap-3">
+                {difficulties.map((difficulty) => {
+                  const isSelected = selectedDifficulty === difficulty.value;
+
+                  return (
+                    <button
+                      key={difficulty.value}
+                      type="button"
+                      onClick={() => setSelectedDifficulty(difficulty.value)}
+                      className={`cursor-pointer rounded-2xl border px-4 py-3 text-left transition ${isSelected
+                        ? "border-[#f5d56c] bg-[#f5d56c]/18"
+                        : "border-[#3f6987] bg-[#0f2b40]/68 hover:border-[#6ea9d6]"
+                        }`}
+                    >
+                      <p className="m-0 text-[1rem] font-semibold">{difficulty.label}</p>
+                      <p className="mt-1 mb-0 text-[0.9rem] text-[#c5d9e9]">{difficulty.hint}</p>
+                    </button>
+                  );
+                })}
+              </div>
+            </section>
+
+            <section className="rounded-2xl border border-[#4a7390]/80 bg-[#10263a]/64 p-4">
+              <div className="mb-3 flex items-center justify-between gap-2">
+                <h2 className="m-0 text-[0.98rem] font-semibold text-[#e7f2fb]">Configuracoes da partida</h2>
+              </div>
+
+              <label className="flex items-center justify-between gap-3 rounded-2xl border border-[#3f6987] bg-[#0f2b40]/68 px-4 py-3">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <p className="m-0 text-[0.95rem] font-semibold text-[#e7f2fb]">Auto balancear arvore</p>
+                    <span className="group relative inline-flex">
+                      <button
+                        type="button"
+                        tabIndex={0}
+                        aria-label="Explicacao do auto balanceamento"
+                        className="grid h-5 w-5 place-items-center rounded-full border border-[#5a85a6] bg-[#163249] text-[0.72rem] font-bold text-[#d8e8f5]"
+                      >
+                        ?
+                      </button>
+                      <span
+                        role="tooltip"
+                        className="pointer-events-none absolute right-0 top-[calc(100%+8px)] z-10 w-[250px] rounded-xl border border-[#5a85a6] bg-[#0a2233] px-3 py-2 text-[0.76rem] leading-[1.35] text-[#deedf8] opacity-0 shadow-[0_12px_24px_rgba(2,8,14,0.55)] transition-opacity duration-150 group-hover:opacity-100 group-focus-within:opacity-100"
+                      >
+                        Ligado: a arvore e reorganizada apos cada jogada para ficar mais equilibrada. Desligado: a estrutura cresce naturalmente como BST.
+                      </span>
+                    </span>
+                  </div>
+                  <p className="mt-1 mb-0 text-[0.84rem] text-[#b8d0e3]">
+                    Reorganiza a arvore automaticamente a cada jogada.
+                  </p>
+                </div>
+
                 <button
-                  key={difficulty.value}
                   type="button"
-                  onClick={() => setSelectedDifficulty(difficulty.value)}
-                  className={`cursor-pointer rounded-2xl border px-4 py-3 text-left transition ${isSelected
-                    ? "border-[#f5d56c] bg-[#f5d56c]/18"
-                    : "border-[#3f6987] bg-[#0f2b40]/68 hover:border-[#6ea9d6]"
+                  role="switch"
+                  aria-checked={selectedAutoBalance}
+                  aria-label="Alternar auto balanceamento"
+                  onClick={() => setSelectedAutoBalance((current) => !current)}
+                  className={`relative h-8 w-14 shrink-0 cursor-pointer overflow-hidden rounded-full border transition-colors ${selectedAutoBalance
+                    ? "border-[#7ee9b8] bg-[#1d6f4f]"
+                    : "border-[#5d7f99] bg-[#173449]"
                     }`}
                 >
-                  <p className="m-0 text-[1rem] font-semibold">{difficulty.label}</p>
-                  <p className="mt-1 mb-0 text-[0.9rem] text-[#c5d9e9]">{difficulty.hint}</p>
-                </button>
-              );
-            })}
-          </div>
-
-          <label className="mt-4 flex items-center justify-between gap-3 rounded-2xl border border-[#3f6987] bg-[#0f2b40]/68 px-4 py-3">
-            <div>
-              <div className="flex items-center gap-2">
-                <p className="m-0 text-[0.95rem] font-semibold text-[#e7f2fb]">Auto balancear arvore</p>
-                <span className="group relative inline-flex">
-                  <button
-                    type="button"
-                    tabIndex={0}
-                    aria-label="Explicacao do auto balanceamento"
-                    className="grid h-5 w-5 place-items-center rounded-full border border-[#5a85a6] bg-[#163249] text-[0.72rem] font-bold text-[#d8e8f5]"
-                  >
-                    ?
-                  </button>
                   <span
-                    role="tooltip"
-                    className="pointer-events-none absolute right-0 top-[calc(100%+8px)] z-10 w-[250px] rounded-xl border border-[#5a85a6] bg-[#0a2233] px-3 py-2 text-[0.76rem] leading-[1.35] text-[#deedf8] opacity-0 shadow-[0_12px_24px_rgba(2,8,14,0.55)] transition-opacity duration-150 group-hover:opacity-100 group-focus-within:opacity-100"
-                  >
-                    Ligado: a arvore e reorganizada apos cada jogada para ficar mais equilibrada. Desligado: a estrutura cresce naturalmente como BST.
-                  </span>
-                </span>
-              </div>
-              <p className="mt-1 mb-0 text-[0.84rem] text-[#b8d0e3]">
-                Reorganiza a arvore automaticamente a cada jogada.
-              </p>
-            </div>
-
-            <button
-              type="button"
-              role="switch"
-              aria-checked={selectedAutoBalance}
-              aria-label="Alternar auto balanceamento"
-              onClick={() => setSelectedAutoBalance((current) => !current)}
-              className={`relative h-8 w-14 shrink-0 cursor-pointer overflow-hidden rounded-full border transition-colors ${selectedAutoBalance
-                ? "border-[#7ee9b8] bg-[#1d6f4f]"
-                : "border-[#5d7f99] bg-[#173449]"
-                }`}
-            >
-              <span
-                className={`absolute top-1 left-1 h-5 w-5 rounded-full bg-[#ecf5fc] shadow-[0_2px_8px_rgba(1,10,18,0.45)] transition-transform ${selectedAutoBalance ? "translate-x-7" : "translate-x-0"
-                  }`}
-              />
-            </button>
-          </label>
+                    className={`absolute top-1 left-1 h-5 w-5 rounded-full bg-[#ecf5fc] shadow-[0_2px_8px_rgba(1,10,18,0.45)] transition-transform ${selectedAutoBalance ? "translate-x-7" : "translate-x-0"
+                      }`}
+                  />
+                </button>
+              </label>
+            </section>
+          </div>
 
           <button
             type="button"
