@@ -205,6 +205,7 @@ export function GameBoard() {
             highlightValue={canHighlight ? (lastGuess?.value ?? null) : null}
             highlightKind={highlightKind}
             animationTick={state.guesses.length}
+            canExport={state.status === "won"}
           />
 
 

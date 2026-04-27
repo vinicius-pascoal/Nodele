@@ -17,6 +17,7 @@ type TreeViewProps = {
   highlightValue?: number | null;
   highlightKind?: "revealed" | "ghost" | null;
   animationTick?: number;
+  canExport?: boolean;
 };
 
 const NODE_STEP_X = 88;
@@ -72,8 +73,10 @@ export function TreeView({
   highlightValue = null,
   highlightKind = null,
   animationTick = 0,
+  canExport = false,
 }: TreeViewProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const exportTargetRef = useRef<HTMLDivElement | null>(null);
   const dragStateRef = useRef<{
     pointerId: number;
     startX: number;
@@ -83,6 +86,9 @@ export function TreeView({
   } | null>(null);
   const [containerWidth, setContainerWidth] = useState(0);
   const [zoom, setZoom] = useState(1);
+  const [isExporting, setIsExporting] = useState(false);
+  const [isSnapshotMode, setIsSnapshotMode] = useState(false);
+  const [exportError, setExportError] = useState<string | null>(null);
 
   useEffect(() => {
     const element = containerRef.current;
@@ -158,6 +164,43 @@ export function TreeView({
     setZoom(1);
   };
 
+  const exportTreeImage = async () => {
+    const exportTarget = exportTargetRef.current;
+
+    if (!exportTarget || isExporting) {
+      return;
+    }
+
+    setIsExporting(true);
+    setExportError(null);
+    setIsSnapshotMode(true);
+
+    try {
+      await new Promise<void>((resolve) => {
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => resolve());
+        });
+      });
+
+      const { toPng } = await import("html-to-image");
+      const dataUrl = await toPng(exportTarget, {
+        cacheBust: true,
+        pixelRatio: Math.max(window.devicePixelRatio, 2),
+        backgroundColor: "#0a1e2e",
+      });
+
+      const downloadLink = document.createElement("a");
+      downloadLink.href = dataUrl;
+      downloadLink.download = `nodele-arvore-${new Date().toISOString().slice(0, 19).replace(/[:T]/g, "-")}.png`;
+      downloadLink.click();
+    } catch {
+      setExportError("Nao foi possivel exportar a imagem da arvore.");
+    } finally {
+      setIsSnapshotMode(false);
+      setIsExporting(false);
+    }
+  };
+
   const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
     if (event.button !== 0 || !containerRef.current) {
       return;
@@ -213,6 +256,17 @@ export function TreeView({
       className="mt-3.5 flex-1 rounded-[14px] border border-[#3a6280]/58 bg-gradient-to-b from-[rgba(5,15,24,0.76)] to-[rgba(6,18,29,0.7)] p-2.5"
     >
       <div className="mb-2 flex items-center justify-end gap-2">
+        {canExport ? (
+          <button
+            type="button"
+            onClick={exportTreeImage}
+            disabled={isExporting}
+            className="mr-auto cursor-pointer rounded-lg border border-[#63a3ca] bg-[#154463] px-3 py-1.5 text-[0.8rem] font-semibold text-[#e2f0fb] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-55"
+          >
+            {isExporting ? "Exportando..." : "Exportar imagem"}
+          </button>
+        ) : null}
+
         <span className="mr-1 text-[0.78rem] text-[#c6dced]">Zoom {Math.round(zoom * 100)}%</span>
         <button
           type="button"
@@ -232,6 +286,15 @@ export function TreeView({
         >
           +
         </button>
+        <button
+          type="button"
+          aria-label="Resetar zoom"
+          onClick={resetZoom}
+          disabled={zoom === 1}
+          className="h-8 cursor-pointer rounded-lg border border-[#557a98] bg-[#123247] px-2.5 text-[0.76rem] font-semibold text-[#dbe9f4] disabled:cursor-not-allowed disabled:opacity-45"
+        >
+          100%
+        </button>
       </div>
 
       <div
@@ -243,7 +306,7 @@ export function TreeView({
         onPointerCancel={endDragging}
         onPointerLeave={endDragging}
       >
-        <div style={{ width: scaledWidth || width, height: scaledHeight || height }}>
+        <div ref={exportTargetRef} style={{ width: scaledWidth || width, height: scaledHeight || height }}>
           <div
             key={animationTick}
             className="relative origin-top-left"
@@ -289,7 +352,7 @@ export function TreeView({
                 return (
                   <line
                     key={`${item.id}-line`}
-                    className="tree-line-draw"
+                    className={isSnapshotMode ? undefined : "tree-line-draw"}
                     x1={x1}
                     y1={y1}
                     x2={x2}
@@ -298,9 +361,9 @@ export function TreeView({
                     strokeWidth={2.2}
                     strokeLinecap="round"
                     style={{
-                      strokeDasharray: lineLength,
-                      strokeDashoffset: lineLength,
-                      animationDelay: `${delayMs}ms`,
+                      strokeDasharray: isSnapshotMode ? undefined : lineLength,
+                      strokeDashoffset: isSnapshotMode ? undefined : lineLength,
+                      animationDelay: isSnapshotMode ? undefined : `${delayMs}ms`,
                     }}
                   />
                 );
@@ -331,6 +394,12 @@ export function TreeView({
           </div>
         </div>
       </div>
+
+      {exportError ? (
+        <p className="mt-2 mb-0 text-[0.78rem] text-[#ffd6d6]" role="status" aria-live="polite">
+          {exportError}
+        </p>
+      ) : null}
     </div>
   );
 }
