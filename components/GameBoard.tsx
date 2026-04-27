@@ -163,6 +163,14 @@ export function GameBoard() {
           <section className={panelClass}>
             <h2 className="mb-3 text-[1.08rem]">Jogada</h2>
             <GuessInput disabled={state.status === "won"} onGuess={submitGuess} />
+          </section>
+
+          <section className={panelClass}>
+            <h2 className="mb-3 text-[1.08rem]">Legenda</h2>
+            <GameLegend />
+          </section>
+          <section className={panelClass}>
+            <h2 className="mb-3 text-[1.08rem]">Controles</h2>
             <div className="mt-2.5 grid gap-2 sm:grid-cols-2">
               <button
                 type="button"
@@ -179,11 +187,6 @@ export function GameBoard() {
                 Menu inicial
               </button>
             </div>
-          </section>
-
-          <section className={panelClass}>
-            <h2 className="mb-3 text-[1.08rem]">Legenda</h2>
-            <GameLegend />
           </section>
         </aside>
       </main>
