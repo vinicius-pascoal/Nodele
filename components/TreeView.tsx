@@ -74,6 +74,13 @@ export function TreeView({
   animationTick = 0,
 }: TreeViewProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const dragStateRef = useRef<{
+    pointerId: number;
+    startX: number;
+    startY: number;
+    startScrollLeft: number;
+    startScrollTop: number;
+  } | null>(null);
   const [containerWidth, setContainerWidth] = useState(0);
   const [zoom, setZoom] = useState(1);
 
@@ -151,10 +158,59 @@ export function TreeView({
     setZoom(1);
   };
 
+  const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (event.button !== 0 || !containerRef.current) {
+      return;
+    }
+
+    const target = event.target as HTMLElement | null;
+
+    if (target?.closest("button")) {
+      return;
+    }
+
+    dragStateRef.current = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startY: event.clientY,
+      startScrollLeft: containerRef.current.scrollLeft,
+      startScrollTop: containerRef.current.scrollTop,
+    };
+
+    event.currentTarget.setPointerCapture(event.pointerId);
+    event.currentTarget.classList.add("cursor-grabbing");
+  };
+
+  const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
+    const dragState = dragStateRef.current;
+
+    if (!dragState || dragState.pointerId !== event.pointerId || !containerRef.current) {
+      return;
+    }
+
+    const deltaX = event.clientX - dragState.startX;
+    const deltaY = event.clientY - dragState.startY;
+
+    containerRef.current.scrollLeft = dragState.startScrollLeft - deltaX;
+    containerRef.current.scrollTop = dragState.startScrollTop - deltaY;
+  };
+
+  const endDragging = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (dragStateRef.current?.pointerId !== event.pointerId) {
+      return;
+    }
+
+    dragStateRef.current = null;
+    event.currentTarget.classList.remove("cursor-grabbing");
+
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+  };
+
   return (
     <div
-      ref={containerRef}
-      className="mt-3.5 flex-1 overflow-auto rounded-[14px] border border-[#3a6280]/58 bg-gradient-to-b from-[rgba(5,15,24,0.76)] to-[rgba(6,18,29,0.7)] p-2.5"
+      className="mt-3.5 flex-1 rounded-[14px] border border-[#3a6280]/58 bg-gradient-to-b from-[rgba(5,15,24,0.76)] to-[rgba(6,18,29,0.7)] p-2.5"
     >
       <div className="mb-2 flex items-center justify-end gap-2">
         <span className="mr-1 text-[0.78rem] text-[#c6dced]">Zoom {Math.round(zoom * 100)}%</span>
@@ -176,101 +232,103 @@ export function TreeView({
         >
           +
         </button>
-        <button
-          type="button"
-          aria-label="Resetar zoom"
-          onClick={resetZoom}
-          className="h-8 cursor-pointer rounded-lg border border-[#557a98] bg-[#123247] px-2.5 text-[0.82rem] font-semibold text-[#dbe9f4]"
-        >
-          100%
-        </button>
       </div>
 
-      <div className="mx-auto" style={{ width: scaledWidth || width, height: scaledHeight || height }}>
-        <div
-          key={animationTick}
-          className="relative origin-top-left"
-          style={{ width, height, transform: `scale(${scale})` }}
-        >
-          <svg
-            className="pointer-events-none absolute inset-0"
-            width={width}
-            height={height}
-            viewBox={`0 0 ${width} ${height}`}
+      <div
+        ref={containerRef}
+        className="mx-auto overflow-auto cursor-grab select-none touch-none rounded-[12px]"
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={endDragging}
+        onPointerCancel={endDragging}
+        onPointerLeave={endDragging}
+      >
+        <div style={{ width: scaledWidth || width, height: scaledHeight || height }}>
+          <div
+            key={animationTick}
+            className="relative origin-top-left"
+            style={{ width, height, transform: `scale(${scale})` }}
           >
+            <svg
+              className="pointer-events-none absolute inset-0"
+              width={width}
+              height={height}
+              viewBox={`0 0 ${width} ${height}`}
+            >
+              {positioned.map((item) => {
+                if (!item.parentId) {
+                  return null;
+                }
+
+                const parent = positionedById.get(item.parentId);
+                if (!parent) {
+                  return null;
+                }
+
+                const drawStep = drawOrderById.get(item.id) ?? 0;
+                const delayMs = drawStep * 95;
+                const dx = item.px - parent.px;
+                const dy = item.py - parent.py;
+                const centerDistance = Math.hypot(dx, dy);
+
+                if (centerDistance === 0) {
+                  return null;
+                }
+
+                const ux = dx / centerDistance;
+                const uy = dy / centerDistance;
+                const parentRadius = resolveNodeRadius(parent.node);
+                const childRadius = resolveNodeRadius(item.node);
+
+                const x1 = parent.px + ux * parentRadius;
+                const y1 = parent.py + uy * parentRadius;
+                const x2 = item.px - ux * childRadius;
+                const y2 = item.py - uy * childRadius;
+                const lineLength = Math.hypot(x2 - x1, y2 - y1);
+
+                return (
+                  <line
+                    key={`${item.id}-line`}
+                    className="tree-line-draw"
+                    x1={x1}
+                    y1={y1}
+                    x2={x2}
+                    y2={y2}
+                    stroke="rgba(146,190,229,0.72)"
+                    strokeWidth={2.2}
+                    strokeLinecap="round"
+                    style={{
+                      strokeDasharray: lineLength,
+                      strokeDashoffset: lineLength,
+                      animationDelay: `${delayMs}ms`,
+                    }}
+                  />
+                );
+              })}
+            </svg>
+
             {positioned.map((item) => {
-              if (!item.parentId) {
-                return null;
-              }
-
-              const parent = positionedById.get(item.parentId);
-              if (!parent) {
-                return null;
-              }
-
-              const drawStep = drawOrderById.get(item.id) ?? 0;
-              const delayMs = drawStep * 95;
-              const dx = item.px - parent.px;
-              const dy = item.py - parent.py;
-              const centerDistance = Math.hypot(dx, dy);
-
-              if (centerDistance === 0) {
-                return null;
-              }
-
-              const ux = dx / centerDistance;
-              const uy = dy / centerDistance;
-              const parentRadius = resolveNodeRadius(parent.node);
-              const childRadius = resolveNodeRadius(item.node);
-
-              const x1 = parent.px + ux * parentRadius;
-              const y1 = parent.py + uy * parentRadius;
-              const x2 = item.px - ux * childRadius;
-              const y2 = item.py - uy * childRadius;
-              const lineLength = Math.hypot(x2 - x1, y2 - y1);
+              const shouldHighlight =
+                highlightValue !== null &&
+                item.node.value === highlightValue &&
+                ((highlightKind === "ghost" && item.node.kind === "ghost") ||
+                  (highlightKind === "revealed" && item.node.kind === "fixed"));
 
               return (
-                <line
-                  key={`${item.id}-line`}
-                  className="tree-line-draw"
-                  x1={x1}
-                  y1={y1}
-                  x2={x2}
-                  y2={y2}
-                  stroke="rgba(146,190,229,0.72)"
-                  strokeWidth={2.2}
-                  strokeLinecap="round"
+                <div
+                  key={item.id}
+                  className="tree-node-draw absolute"
                   style={{
-                    strokeDasharray: lineLength,
-                    strokeDashoffset: lineLength,
-                    animationDelay: `${delayMs}ms`,
+                    left: item.px,
+                    top: item.py,
+                    animationDelay: `${(drawOrderById.get(item.id) ?? 0) * 95 + 55}ms`,
                   }}
-                />
+                >
+                  <TreeNodeView node={item.node} isHighlighted={shouldHighlight} />
+                </div>
               );
             })}
-          </svg>
-
-          {positioned.map((item) => {
-            const shouldHighlight =
-              highlightValue !== null &&
-              item.node.value === highlightValue &&
-              ((highlightKind === "ghost" && item.node.kind === "ghost") ||
-                (highlightKind === "revealed" && item.node.kind === "fixed"));
-
-            return (
-              <div
-                key={item.id}
-                className="tree-node-draw absolute"
-                style={{
-                  left: item.px,
-                  top: item.py,
-                  animationDelay: `${(drawOrderById.get(item.id) ?? 0) * 95 + 55}ms`,
-                }}
-              >
-                <TreeNodeView node={item.node} isHighlighted={shouldHighlight} />
-              </div>
-            );
-          })}
+          </div>
         </div>
       </div>
     </div>
