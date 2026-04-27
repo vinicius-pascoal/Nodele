@@ -50,15 +50,15 @@ export function GameBoard() {
   if (!state) {
     return (
       <div className="mx-auto my-[18px] w-[94vw] max-w-[980px] sm:my-8 sm:w-[92vw]">
-        <section className="animate-in fade-in slide-in-from-bottom-2 rounded-3xl border border-[#3a6280]/65 bg-gradient-to-br from-[#163249]/88 to-[#0d2435]/92 p-5 shadow-[0_18px_40px_rgba(3,10,18,0.45)] sm:p-7">
-          <h1 className="my-2 text-[clamp(2rem,5vw,3.4rem)] leading-none">Nodele</h1>
+        <section className="ui-enter-rise rounded-3xl border border-[#3a6280]/65 bg-gradient-to-br from-[#163249]/88 to-[#0d2435]/92 p-5 shadow-[0_18px_40px_rgba(3,10,18,0.45)] sm:p-7">
+          <h1 className="ui-enter-right my-2 text-[clamp(2rem,5vw,3.4rem)] leading-none">Nodele</h1>
           <p className="m-0 max-w-[58ch] text-[clamp(1rem,2.6vw,1.12rem)] text-[#c8deef]">
             Escolha a dificuldade para gerar uma fase aleatoria. Quanto maior a dificuldade,
             maior a quantidade de nos ocultos.
           </p>
 
           <div className="mt-6 grid gap-4 sm:gap-5">
-            <section className="rounded-2xl border border-[#3f6987]/80 bg-[#0f2b40]/62 p-4">
+            <section className="ui-enter-rise ui-enter-delay-1 rounded-2xl border border-[#3f6987]/80 bg-[#0f2b40]/62 p-4">
               <div className="mb-3 flex items-center justify-between gap-2">
                 <h2 className="m-0 text-[0.98rem] font-semibold text-[#e7f2fb]">Dificuldade</h2>
               </div>
@@ -85,7 +85,7 @@ export function GameBoard() {
               </div>
             </section>
 
-            <section className="rounded-2xl border border-[#4a7390]/80 bg-[#10263a]/64 p-4">
+            <section className="ui-enter-rise ui-enter-delay-2 rounded-2xl border border-[#4a7390]/80 bg-[#10263a]/64 p-4">
               <div className="mb-3 flex items-center justify-between gap-2">
                 <h2 className="m-0 text-[0.98rem] font-semibold text-[#e7f2fb]">Configuracoes da partida</h2>
               </div>
@@ -136,7 +136,7 @@ export function GameBoard() {
           <button
             type="button"
             onClick={() => startGame(selectedDifficulty, selectedAutoBalance)}
-            className="mt-5 w-full cursor-pointer rounded-xl bg-gradient-to-br from-[#81f5c2] to-[#56dca6] px-4 py-3 font-bold text-[#08301f] transition hover:brightness-105"
+            className="ui-enter-rise ui-enter-delay-3 mt-5 w-full cursor-pointer rounded-xl bg-gradient-to-br from-[#81f5c2] to-[#56dca6] px-4 py-3 font-bold text-[#08301f] transition hover:brightness-105"
           >
             Iniciar partida
           </button>
@@ -178,7 +178,7 @@ export function GameBoard() {
 
   return (
     <div className="mx-auto my-[18px] w-[94vw] max-w-[1200px] sm:my-8 sm:w-[92vw]">
-      <header className="animate-in fade-in slide-in-from-bottom-2 rounded-3xl border border-[#3a6280]/65 bg-gradient-to-br from-[#163249]/88 to-[#0d2435]/92 px-4 py-[18px] shadow-[0_18px_40px_rgba(3,10,18,0.45)] sm:px-6 sm:py-[26px]">
+      <header className="ui-enter-rise rounded-3xl border border-[#3a6280]/65 bg-gradient-to-br from-[#163249]/88 to-[#0d2435]/92 px-4 py-[18px] shadow-[0_18px_40px_rgba(3,10,18,0.45)] sm:px-6 sm:py-[26px]">
         <h1 className="my-2 text-[clamp(2rem,5vw,3.5rem)] leading-none">Nodele</h1>
         <div className="flex flex-wrap items-center gap-2 text-[#c8deef]">
           <p className="m-0 text-[clamp(1rem,2.6vw,1.2rem)]">Descubra os nos ocultos da arvore binaria.</p>
@@ -195,7 +195,7 @@ export function GameBoard() {
       </header>
 
       <main className="mt-[18px] grid items-start gap-[18px] lg:grid-cols-[minmax(0,1.55fr)_minmax(290px,1fr)]">
-        <section className={`${panelClass} flex min-h-[430px] flex-col lg:min-h-[500px]`}>
+        <section className={`${panelClass} ui-enter-rise ui-enter-delay-1 flex min-h-[430px] flex-col lg:min-h-[500px]`}>
           <div className={statusClass} role="status" aria-live="polite">
             {state.message}
           </div>
@@ -210,17 +210,17 @@ export function GameBoard() {
 
         </section>
 
-        <aside className="grid gap-[14px]">
-          <section className={panelClass}>
+        <aside className="ui-enter-right ui-enter-delay-2 grid gap-[14px]">
+          <section className={`${panelClass} ui-enter-rise ui-enter-delay-2`}>
             <h2 className="mb-3 text-[1.08rem]">Jogada</h2>
             <GuessInput disabled={state.status === "won"} onGuess={submitGuess} />
           </section>
 
-          <section className={panelClass}>
+          <section className={`${panelClass} ui-enter-rise ui-enter-delay-3`}>
             <h2 className="mb-3 text-[1.08rem]">Legenda</h2>
             <GameLegend />
           </section>
-          <section className={panelClass}>
+          <section className={`${panelClass} ui-enter-rise ui-enter-delay-4`}>
             <h2 className="mb-3 text-[1.08rem]">Controles</h2>
             <div className="mt-2.5 grid gap-2 sm:grid-cols-2">
               <button
