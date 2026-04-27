@@ -51,7 +51,6 @@ export function GameBoard() {
     return (
       <div className="mx-auto my-[18px] w-[94vw] max-w-[980px] sm:my-8 sm:w-[92vw]">
         <section className="animate-in fade-in slide-in-from-bottom-2 rounded-3xl border border-[#3a6280]/65 bg-gradient-to-br from-[#163249]/88 to-[#0d2435]/92 p-5 shadow-[0_18px_40px_rgba(3,10,18,0.45)] sm:p-7">
-          <p className="m-0 text-[0.82rem] uppercase tracking-[0.06em] text-[#c8deef]">Puzzle de lógica</p>
           <h1 className="my-2 text-[clamp(2rem,5vw,3.4rem)] leading-none">Nodele</h1>
           <p className="m-0 max-w-[58ch] text-[clamp(1rem,2.6vw,1.12rem)] text-[#c8deef]">
             Escolha a dificuldade para gerar uma fase aleatoria. Quanto maior a dificuldade,
@@ -112,9 +111,6 @@ export function GameBoard() {
                       </span>
                     </span>
                   </div>
-                  <p className="mt-1 mb-0 text-[0.84rem] text-[#b8d0e3]">
-                    Reorganiza a arvore automaticamente a cada jogada.
-                  </p>
                 </div>
 
                 <button
@@ -183,9 +179,6 @@ export function GameBoard() {
   return (
     <div className="mx-auto my-[18px] w-[94vw] max-w-[1200px] sm:my-8 sm:w-[92vw]">
       <header className="animate-in fade-in slide-in-from-bottom-2 rounded-3xl border border-[#3a6280]/65 bg-gradient-to-br from-[#163249]/88 to-[#0d2435]/92 px-4 py-[18px] shadow-[0_18px_40px_rgba(3,10,18,0.45)] sm:px-6 sm:py-[26px]">
-        <p className="m-0 text-[0.82rem] uppercase tracking-[0.06em] text-[#c8deef]">
-          Puzzle de lógica
-        </p>
         <h1 className="my-2 text-[clamp(2rem,5vw,3.5rem)] leading-none">Nodele</h1>
         <div className="flex flex-wrap items-center gap-2 text-[#c8deef]">
           <p className="m-0 text-[clamp(1rem,2.6vw,1.2rem)]">Descubra os nos ocultos da arvore binaria.</p>
