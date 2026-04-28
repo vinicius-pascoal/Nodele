@@ -77,12 +77,23 @@ export function TreeView({
 }: TreeViewProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const exportTargetRef = useRef<HTMLDivElement | null>(null);
+  const activePointersRef = useRef(
+    new Map<number, { x: number; y: number }>(),
+  );
   const dragStateRef = useRef<{
     pointerId: number;
     startX: number;
     startY: number;
     startScrollLeft: number;
     startScrollTop: number;
+  } | null>(null);
+  const pinchStateRef = useRef<{
+    initialDistance: number;
+    initialZoom: number;
+    initialScrollLeft: number;
+    initialScrollTop: number;
+    centerX: number;
+    centerY: number;
   } | null>(null);
   const [containerWidth, setContainerWidth] = useState(0);
   const [viewportWidth, setViewportWidth] = useState(0);
@@ -235,19 +246,88 @@ export function TreeView({
       return;
     }
 
-    dragStateRef.current = {
-      pointerId: event.pointerId,
-      startX: event.clientX,
-      startY: event.clientY,
-      startScrollLeft: containerRef.current.scrollLeft,
-      startScrollTop: containerRef.current.scrollTop,
-    };
+    activePointersRef.current.set(event.pointerId, {
+      x: event.clientX,
+      y: event.clientY,
+    });
+
+    if (activePointersRef.current.size === 1) {
+      dragStateRef.current = {
+        pointerId: event.pointerId,
+        startX: event.clientX,
+        startY: event.clientY,
+        startScrollLeft: containerRef.current.scrollLeft,
+        startScrollTop: containerRef.current.scrollTop,
+      };
+    }
+
+    if (activePointersRef.current.size === 2) {
+      dragStateRef.current = null;
+
+      const points = [...activePointersRef.current.values()];
+      const firstPoint = points[0];
+      const secondPoint = points[1];
+      const centerX = (firstPoint.x + secondPoint.x) / 2 - containerRef.current.getBoundingClientRect().left;
+      const centerY = (firstPoint.y + secondPoint.y) / 2 - containerRef.current.getBoundingClientRect().top;
+      const distance = Math.hypot(firstPoint.x - secondPoint.x, firstPoint.y - secondPoint.y);
+
+      pinchStateRef.current = {
+        initialDistance: distance,
+        initialZoom: zoom,
+        initialScrollLeft: containerRef.current.scrollLeft,
+        initialScrollTop: containerRef.current.scrollTop,
+        centerX,
+        centerY,
+      };
+    }
 
     event.currentTarget.setPointerCapture(event.pointerId);
     event.currentTarget.classList.add("cursor-grabbing");
   };
 
   const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
+    const pointer = activePointersRef.current.get(event.pointerId);
+
+    if (pointer) {
+      pointer.x = event.clientX;
+      pointer.y = event.clientY;
+    }
+
+    const pinchState = pinchStateRef.current;
+
+    if (pinchState && activePointersRef.current.size >= 2 && containerRef.current) {
+      const points = [...activePointersRef.current.values()];
+      const firstPoint = points[0];
+      const secondPoint = points[1];
+      const currentDistance = Math.hypot(firstPoint.x - secondPoint.x, firstPoint.y - secondPoint.y);
+
+      if (pinchState.initialDistance > 0 && currentDistance > 0) {
+        const nextZoom = Math.max(MIN_ZOOM, Number((pinchState.initialZoom * (currentDistance / pinchState.initialDistance)).toFixed(2)));
+        const previousScale = fitScale * appliedZoom;
+        const nextScale = fitScale * nextZoom;
+
+        if (previousScale > 0 && nextScale > 0) {
+          const contentX = (pinchState.initialScrollLeft + pinchState.centerX) / previousScale;
+          const contentY = (pinchState.initialScrollTop + pinchState.centerY) / previousScale;
+
+          setZoom(nextZoom);
+
+          requestAnimationFrame(() => {
+            const currentContainer = containerRef.current;
+
+            if (!currentContainer) {
+              return;
+            }
+
+            currentContainer.scrollLeft = contentX * nextScale - pinchState.centerX;
+            currentContainer.scrollTop = contentY * nextScale - pinchState.centerY;
+          });
+
+          return;
+        }
+      }
+    }
+
     const dragState = dragStateRef.current;
 
     if (!dragState || dragState.pointerId !== event.pointerId || !containerRef.current) {
@@ -262,11 +342,28 @@ export function TreeView({
   };
 
   const endDragging = (event: React.PointerEvent<HTMLDivElement>) => {
-    if (dragStateRef.current?.pointerId !== event.pointerId) {
-      return;
+    activePointersRef.current.delete(event.pointerId);
+
+    if (activePointersRef.current.size < 2) {
+      pinchStateRef.current = null;
     }
 
-    dragStateRef.current = null;
+    if (dragStateRef.current?.pointerId === event.pointerId) {
+      dragStateRef.current = null;
+
+      const [remainingPointerId, remainingPointer] = activePointersRef.current.entries().next().value ?? [];
+
+      if (remainingPointerId !== undefined && remainingPointer && containerRef.current) {
+        dragStateRef.current = {
+          pointerId: remainingPointerId,
+          startX: remainingPointer.x,
+          startY: remainingPointer.y,
+          startScrollLeft: containerRef.current.scrollLeft,
+          startScrollTop: containerRef.current.scrollTop,
+        };
+      }
+    }
+
     event.currentTarget.classList.remove("cursor-grabbing");
 
     if (event.currentTarget.hasPointerCapture(event.pointerId)) {
