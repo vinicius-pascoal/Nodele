@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import { useLanguage } from "@/components/LanguageProvider";
 
 type GuessInputProps = {
   disabled?: boolean;
@@ -8,6 +9,7 @@ type GuessInputProps = {
 };
 
 export function GuessInput({ disabled = false, onGuess }: GuessInputProps) {
+  const { t } = useLanguage();
   const [value, setValue] = useState("");
 
   const submit = (event: FormEvent<HTMLFormElement>) => {
@@ -33,7 +35,7 @@ export function GuessInput({ disabled = false, onGuess }: GuessInputProps) {
   return (
     <form className="grid gap-2" onSubmit={submit}>
       <label htmlFor="guess-input" className="text-[0.9rem] text-[#d3e5f3] sm:text-[0.95rem]">
-        Seu palpite
+        {t.guessInput.label}
       </label>
       <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto]">
         <input
@@ -44,7 +46,7 @@ export function GuessInput({ disabled = false, onGuess }: GuessInputProps) {
           max={99}
           step={1}
           className="guess-number-input w-full rounded-xl border border-[#4f7390] bg-[#071825] px-3 py-2.5 text-base text-[#e6f2fb] placeholder:text-[#88a9c0] focus:border-[#f5d56c] focus:outline-none focus:ring-3 focus:ring-[#f5d56c]/20"
-          placeholder="Ex.: 30"
+          placeholder={t.guessInput.placeholder}
           value={value}
           onChange={(event) => setValue(event.target.value)}
           disabled={disabled}
@@ -55,7 +57,7 @@ export function GuessInput({ disabled = false, onGuess }: GuessInputProps) {
           className="w-full cursor-pointer rounded-xl bg-linear-to-br from-[#f5d56c] to-[#f0b63f] px-4 py-2.5 font-bold text-[#102434] transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
           disabled={disabled}
         >
-          Inserir
+          {t.guessInput.submit}
         </button>
       </div>
     </form>

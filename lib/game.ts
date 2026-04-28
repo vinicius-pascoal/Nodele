@@ -10,13 +10,6 @@ import {
 } from "@/lib/tree";
 import type { GameDifficulty, GameState, GuessResult, TreeNode } from "@/types/game";
 
-const difficultyLabel: Record<GameDifficulty, string> = {
-  easy: "facil",
-  medium: "medio",
-  hard: "dificil",
-  brutal: "brutal",
-};
-
 type CreateGameOptions = {
   autoBalance?: boolean;
 };
@@ -37,7 +30,11 @@ export function createInitialGameState(
     guesses: [],
     status: "playing",
     autoBalance,
-    message: `Descubra os nos ocultos. Dificuldade: ${difficultyLabel[difficulty]}. Balanceamento automatico: ${autoBalance ? "ligado" : "desligado"}.`,
+    message: {
+      key: "initial",
+      difficulty,
+      autoBalance,
+    },
   };
 }
 
@@ -60,7 +57,9 @@ export function processGuess(state: GameState, value: number): GameState {
           createdAt: new Date(),
         },
       ],
-      message: "Você já tentou esse valor.",
+      message: {
+        key: "duplicate",
+      },
     };
   }
 
@@ -68,16 +67,16 @@ export function processGuess(state: GameState, value: number): GameState {
 
   let nextTree: TreeNode;
   let result: GuessResult;
-  let message = "";
+  let messageKey: "revealed" | "ghost" | "won";
 
   if (hiddenNode) {
     nextTree = revealHiddenNode(state.tree, value) as TreeNode;
     result = "revealed";
-    message = "Acerto! Um nó oculto foi revelado.";
+    messageKey = "revealed";
   } else {
     nextTree = insertGhostNode(state.tree, value);
     result = "ghost";
-    message = "Esse valor não era oculto e entrou como nó fantasma.";
+    messageKey = "ghost";
   }
 
   if (state.autoBalance) {
@@ -87,7 +86,7 @@ export function processGuess(state: GameState, value: number): GameState {
   const nextStatus = allHiddenNodesRevealed(nextTree) ? "won" : "playing";
 
   if (nextStatus === "won") {
-    message = "Parabéns! Você revelou todos os nós ocultos.";
+    messageKey = "won";
   }
 
   return {
@@ -102,6 +101,8 @@ export function processGuess(state: GameState, value: number): GameState {
         createdAt: new Date(),
       },
     ],
-    message,
+    message: {
+      key: messageKey,
+    },
   };
 }

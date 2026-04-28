@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useLanguage } from "@/components/LanguageProvider";
 import type { TreeNode } from "@/types/game";
 import { TreeNodeView } from "@/components/TreeNodeView";
 
@@ -75,6 +76,7 @@ export function TreeView({
   animationTick = 0,
   canExport = false,
 }: TreeViewProps) {
+  const { t } = useLanguage();
   const containerRef = useRef<HTMLDivElement | null>(null);
   const exportTargetRef = useRef<HTMLDivElement | null>(null);
   const activePointersRef = useRef(
@@ -101,7 +103,7 @@ export function TreeView({
   const [zoom, setZoom] = useState(1);
   const [isExporting, setIsExporting] = useState(false);
   const [isSnapshotMode, setIsSnapshotMode] = useState(false);
-  const [exportError, setExportError] = useState<string | null>(null);
+  const [exportError, setExportError] = useState<"exportFailed" | null>(null);
 
   useEffect(() => {
     const element = containerRef.current;
@@ -228,7 +230,7 @@ export function TreeView({
       downloadLink.download = `nodele-arvore-${new Date().toISOString().slice(0, 19).replace(/[:T]/g, "-")}.png`;
       downloadLink.click();
     } catch {
-      setExportError("Nao foi possivel exportar a imagem da arvore.");
+      setExportError("exportFailed");
     } finally {
       setIsSnapshotMode(false);
       setIsExporting(false);
@@ -383,14 +385,16 @@ export function TreeView({
             disabled={isExporting}
             className="mr-auto cursor-pointer rounded-lg border border-[#63a3ca] bg-[#154463] px-3 py-1.5 text-[0.8rem] font-semibold text-[#e2f0fb] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-55 max-sm:mr-0"
           >
-            {isExporting ? "Exportando..." : "Exportar imagem"}
+            {isExporting ? t.tree.exporting : t.tree.exportImage}
           </button>
         ) : null}
 
-        <span className="mr-1 text-[0.78rem] text-[#c6dced]">Zoom {Math.round(appliedZoom * 100)}%</span>
+        <span className="mr-1 text-[0.78rem] text-[#c6dced]">
+          {t.tree.zoom} {Math.round(appliedZoom * 100)}%
+        </span>
         <button
           type="button"
-          aria-label="Diminuir zoom"
+          aria-label={t.tree.zoomOutAria}
           onClick={decreaseZoom}
           disabled={appliedZoom <= MIN_ZOOM}
           className="h-8 w-8 cursor-pointer rounded-lg border border-[#557a98] bg-[#123247] text-[#dbe9f4] disabled:cursor-not-allowed disabled:opacity-45 max-sm:h-7 max-sm:w-7"
@@ -399,7 +403,7 @@ export function TreeView({
         </button>
         <button
           type="button"
-          aria-label="Aumentar zoom"
+          aria-label={t.tree.zoomInAria}
           onClick={increaseZoom}
           disabled={appliedZoom >= maxAllowedZoom}
           className="h-8 w-8 cursor-pointer rounded-lg border border-[#557a98] bg-[#123247] text-[#dbe9f4] disabled:cursor-not-allowed disabled:opacity-45 max-sm:h-7 max-sm:w-7"
@@ -510,7 +514,7 @@ export function TreeView({
 
       {exportError ? (
         <p className="mt-2 mb-0 text-[0.78rem] text-[#ffd6d6]" role="status" aria-live="polite">
-          {exportError}
+          {t.tree.exportError}
         </p>
       ) : null}
     </div>

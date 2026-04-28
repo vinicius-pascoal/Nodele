@@ -22,10 +22,29 @@ export type Guess = {
 
 export type GameStatus = "playing" | "won";
 
+export type GameMessage =
+  | {
+    key: "initial";
+    difficulty: GameDifficulty;
+    autoBalance: boolean;
+  }
+  | {
+    key: "duplicate";
+  }
+  | {
+    key: "revealed";
+  }
+  | {
+    key: "ghost";
+  }
+  | {
+    key: "won";
+  };
+
 export type GameState = {
   tree: TreeNode;
   guesses: Guess[];
   status: GameStatus;
   autoBalance: boolean;
-  message?: string;
+  message?: GameMessage;
 };
