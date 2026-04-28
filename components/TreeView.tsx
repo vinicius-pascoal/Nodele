@@ -26,7 +26,7 @@ const PADDING_X = 44;
 const PADDING_Y = 36;
 const FRAME_PADDING = 16;
 const MIN_ZOOM = 0.8;
-const MAX_ZOOM = 2;
+const MAX_ZOOM = Number.POSITIVE_INFINITY;
 const ZOOM_STEP = 0.2;
 
 function resolveNodeRadius(node: TreeNode): number {
