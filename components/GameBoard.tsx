@@ -200,7 +200,7 @@ export function GameBoard() {
       </header>
 
       <main className="mt-4.5 grid items-start gap-3.5 sm:gap-4.5 lg:grid-cols-[minmax(0,1.55fr)_minmax(290px,1fr)]">
-        <section className={`${panelClass} ui-enter-rise ui-enter-delay-1 flex min-h-90 flex-col lg:min-h-125 max-sm:min-h-0`}>
+        <section className={`${panelClass} ui-enter-rise ui-enter-delay-1 flex min-h-90 min-w-0 flex-col lg:min-h-125 max-sm:min-h-0`}>
           <div className={statusClass} role="status" aria-live="polite">
             {state.message}
           </div>

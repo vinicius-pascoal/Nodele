@@ -25,7 +25,6 @@ const NODE_STEP_Y = 100;
 const PADDING_X = 44;
 const PADDING_Y = 36;
 const FRAME_PADDING = 16;
-const MOBILE_VIEWPORT_MAX_WIDTH = 640;
 const MIN_ZOOM = 0.8;
 const MAX_ZOOM = 2;
 const ZOOM_STEP = 0.2;
@@ -86,6 +85,8 @@ export function TreeView({
     startScrollTop: number;
   } | null>(null);
   const [containerWidth, setContainerWidth] = useState(0);
+  const [viewportWidth, setViewportWidth] = useState(0);
+  const [viewportHeight, setViewportHeight] = useState(0);
   const [zoom, setZoom] = useState(1);
   const [isExporting, setIsExporting] = useState(false);
   const [isSnapshotMode, setIsSnapshotMode] = useState(false);
@@ -107,7 +108,22 @@ export function TreeView({
     observer.observe(element);
     setContainerWidth(Math.round(element.clientWidth));
 
-    return () => observer.disconnect();
+    const updateViewportHeight = () => {
+      const nextWidth = Math.round(window.innerWidth);
+      const nextHeight = Math.round(window.innerHeight);
+      setViewportWidth((current) => (current === nextWidth ? current : nextWidth));
+      setViewportHeight((current) => (current === nextHeight ? current : nextHeight));
+    };
+
+    updateViewportHeight();
+    window.addEventListener("resize", updateViewportHeight);
+    window.addEventListener("orientationchange", updateViewportHeight);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", updateViewportHeight);
+      window.removeEventListener("orientationchange", updateViewportHeight);
+    };
   }, []);
 
   const layout = useMemo(() => buildLayout(tree), [tree]);
@@ -149,9 +165,15 @@ export function TreeView({
   const width = (maxX + 1) * NODE_STEP_X + PADDING_X * 2;
   const height = (maxY + 1) * NODE_STEP_Y + PADDING_Y * 2;
   const availableWidth = Math.max(containerWidth - FRAME_PADDING * 2, 0);
-  const fitScale = availableWidth > 0 ? Math.min(1, availableWidth / width) : 1;
-  const isCompactViewport = containerWidth > 0 && containerWidth < MOBILE_VIEWPORT_MAX_WIDTH;
-  const maxAllowedZoom = isCompactViewport ? 1 : MAX_ZOOM;
+  const isCompactViewport = viewportWidth > 0 && viewportWidth < 640;
+  const availableHeight = Math.max(
+    viewportHeight * (isCompactViewport ? 0.56 : 0.68) - FRAME_PADDING * 2,
+    0,
+  );
+  const widthFitScale = availableWidth > 0 ? availableWidth / width : 1;
+  const heightFitScale = availableHeight > 0 ? availableHeight / height : 1;
+  const fitScale = Math.min(1, widthFitScale, heightFitScale);
+  const maxAllowedZoom = MAX_ZOOM;
   const appliedZoom = Math.min(zoom, maxAllowedZoom);
   const scale = fitScale * appliedZoom;
   const scaledWidth = width * scale;
@@ -163,10 +185,6 @@ export function TreeView({
 
   const increaseZoom = () => {
     setZoom((current) => Math.min(MAX_ZOOM, Number((current + ZOOM_STEP).toFixed(2))));
-  };
-
-  const resetZoom = () => {
-    setZoom(1);
   };
 
   const exportTreeImage = async () => {
@@ -295,7 +313,7 @@ export function TreeView({
 
       <div
         ref={containerRef}
-        className="mx-auto max-h-[60vh] overflow-auto [scrollbar-gutter:stable] cursor-grab select-none touch-none rounded-xl max-sm:max-h-[56vh] sm:max-h-[68vh] lg:max-h-155"
+        className="mx-auto w-full max-h-[60vh] overflow-auto [scrollbar-gutter:stable] cursor-grab select-none touch-none rounded-xl max-sm:max-h-[56vh] sm:max-h-[68vh] lg:max-h-155"
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={endDragging}
