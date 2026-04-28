@@ -25,6 +25,7 @@ const NODE_STEP_Y = 100;
 const PADDING_X = 44;
 const PADDING_Y = 36;
 const FRAME_PADDING = 16;
+const MOBILE_VIEWPORT_MAX_WIDTH = 640;
 const MIN_ZOOM = 0.8;
 const MAX_ZOOM = 2;
 const ZOOM_STEP = 0.2;
@@ -149,7 +150,10 @@ export function TreeView({
   const height = (maxY + 1) * NODE_STEP_Y + PADDING_Y * 2;
   const availableWidth = Math.max(containerWidth - FRAME_PADDING * 2, 0);
   const fitScale = availableWidth > 0 ? Math.min(1, availableWidth / width) : 1;
-  const scale = fitScale * zoom;
+  const isCompactViewport = containerWidth > 0 && containerWidth < MOBILE_VIEWPORT_MAX_WIDTH;
+  const maxAllowedZoom = isCompactViewport ? 1 : MAX_ZOOM;
+  const appliedZoom = Math.min(zoom, maxAllowedZoom);
+  const scale = fitScale * appliedZoom;
   const scaledWidth = width * scale;
   const scaledHeight = height * scale;
 
@@ -254,7 +258,7 @@ export function TreeView({
 
   return (
     <div
-      className="mt-3.5 flex-1 rounded-[14px] border border-[#3a6280]/58 bg-gradient-to-b from-[rgba(5,15,24,0.76)] to-[rgba(6,18,29,0.7)] p-2.5"
+      className="mt-3.5 flex-1 rounded-[14px] border border-[#3a6280]/58 bg-linear-to-b from-[rgba(5,15,24,0.76)] to-[rgba(6,18,29,0.7)] p-2.5"
     >
       <div className="mb-2 flex items-center justify-end gap-2">
         {canExport ? (
@@ -268,12 +272,12 @@ export function TreeView({
           </button>
         ) : null}
 
-        <span className="mr-1 text-[0.78rem] text-[#c6dced]">Zoom {Math.round(zoom * 100)}%</span>
+        <span className="mr-1 text-[0.78rem] text-[#c6dced]">Zoom {Math.round(appliedZoom * 100)}%</span>
         <button
           type="button"
           aria-label="Diminuir zoom"
           onClick={decreaseZoom}
-          disabled={zoom <= MIN_ZOOM}
+          disabled={appliedZoom <= MIN_ZOOM}
           className="h-8 w-8 cursor-pointer rounded-lg border border-[#557a98] bg-[#123247] text-[#dbe9f4] disabled:cursor-not-allowed disabled:opacity-45"
         >
           -
@@ -282,7 +286,7 @@ export function TreeView({
           type="button"
           aria-label="Aumentar zoom"
           onClick={increaseZoom}
-          disabled={zoom >= MAX_ZOOM}
+          disabled={appliedZoom >= maxAllowedZoom}
           className="h-8 w-8 cursor-pointer rounded-lg border border-[#557a98] bg-[#123247] text-[#dbe9f4] disabled:cursor-not-allowed disabled:opacity-45"
         >
           +
@@ -291,7 +295,7 @@ export function TreeView({
           type="button"
           aria-label="Resetar zoom"
           onClick={resetZoom}
-          disabled={zoom === 1}
+          disabled={appliedZoom === 1}
           className="h-8 cursor-pointer rounded-lg border border-[#557a98] bg-[#123247] px-2.5 text-[0.76rem] font-semibold text-[#dbe9f4] disabled:cursor-not-allowed disabled:opacity-45"
         >
           100%
@@ -300,7 +304,7 @@ export function TreeView({
 
       <div
         ref={containerRef}
-        className="mx-auto max-h-[68vh] overflow-auto [scrollbar-gutter:stable] cursor-grab select-none touch-none rounded-[12px] lg:max-h-[620px]"
+        className="mx-auto max-h-[68vh] overflow-auto [scrollbar-gutter:stable] cursor-grab select-none touch-none rounded-xl lg:max-h-155"
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={endDragging}
@@ -320,11 +324,13 @@ export function TreeView({
               viewBox={`0 0 ${width} ${height}`}
             >
               {positioned.map((item) => {
-                if (!item.parentId) {
+                const parentId = item.parentId;
+
+                if (parentId === null) {
                   return null;
                 }
 
-                const parent = positionedById.get(item.parentId);
+                const parent = positionedById.get(parentId);
                 if (!parent) {
                   return null;
                 }
