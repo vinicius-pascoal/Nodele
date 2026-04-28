@@ -291,15 +291,6 @@ export function TreeView({
         >
           +
         </button>
-        <button
-          type="button"
-          aria-label="Resetar zoom"
-          onClick={resetZoom}
-          disabled={appliedZoom === 1}
-          className="h-8 cursor-pointer rounded-lg border border-[#557a98] bg-[#123247] px-2.5 text-[0.76rem] font-semibold text-[#dbe9f4] disabled:cursor-not-allowed disabled:opacity-45 max-sm:h-7"
-        >
-          100%
-        </button>
       </div>
 
       <div
