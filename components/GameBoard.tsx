@@ -9,7 +9,7 @@ import { createInitialGameState, processGuess } from "@/lib/game";
 import type { GameDifficulty, GameState } from "@/types/game";
 
 const panelClass =
-  "rounded-[20px] border border-[#3a6280]/63 bg-[#0d2435]/90 p-4 shadow-[0_16px_32px_rgba(4,12,19,0.4)] backdrop-blur-sm";
+  "rounded-[20px] border border-[#3a6280]/63 bg-[#0d2435]/90 p-3 shadow-[0_16px_32px_rgba(4,12,19,0.4)] backdrop-blur-sm sm:p-4";
 
 const difficulties: Array<{ value: GameDifficulty; label: string; hint: string }> = [
   {
@@ -54,8 +54,8 @@ export function GameBoard() {
 
   if (!state) {
     return (
-      <div className="mx-auto my-[18px] w-[94vw] max-w-[980px] sm:my-8 sm:w-[92vw]">
-        <section className="ui-enter-rise rounded-3xl border border-[#3a6280]/65 bg-gradient-to-br from-[#163249]/88 to-[#0d2435]/92 p-5 shadow-[0_18px_40px_rgba(3,10,18,0.45)] sm:p-7">
+      <div className="mx-auto my-4.5 w-[94vw] max-w-245 sm:my-8 sm:w-[92vw]">
+        <section className="ui-enter-rise rounded-3xl border border-[#3a6280]/65 bg-linear-to-br from-[#163249]/88 to-[#0d2435]/92 p-4 shadow-[0_18px_40px_rgba(3,10,18,0.45)] sm:p-7">
           <h1 className="ui-enter-right my-2 text-[clamp(2rem,5vw,3.4rem)] leading-none">Nodele</h1>
           <p className="m-0 max-w-[58ch] text-[clamp(1rem,2.6vw,1.12rem)] text-[#c8deef]">
             Escolha a dificuldade para gerar uma fase aleatoria. Quanto maior a dificuldade,
@@ -110,7 +110,7 @@ export function GameBoard() {
                       </button>
                       <span
                         role="tooltip"
-                        className="pointer-events-none absolute right-0 top-[calc(100%+8px)] z-10 w-[250px] rounded-xl border border-[#5a85a6] bg-[#0a2233] px-3 py-2 text-[0.76rem] leading-[1.35] text-[#deedf8] opacity-0 shadow-[0_12px_24px_rgba(2,8,14,0.55)] transition-opacity duration-150 group-hover:opacity-100 group-focus-within:opacity-100"
+                        className="pointer-events-none absolute right-0 top-[calc(100%+8px)] z-10 w-[calc(100vw-2rem)] max-w-62.5 rounded-xl border border-[#5a85a6] bg-[#0a2233] px-3 py-2 text-[0.76rem] leading-[1.35] text-[#deedf8] opacity-0 shadow-[0_12px_24px_rgba(2,8,14,0.55)] transition-opacity duration-150 group-hover:opacity-100 group-focus-within:opacity-100"
                       >
                         Ligado: a arvore e reorganizada apos cada jogada para ficar mais equilibrada. Desligado: a estrutura cresce naturalmente como BST.
                       </span>
@@ -141,7 +141,7 @@ export function GameBoard() {
           <button
             type="button"
             onClick={() => startGame(selectedDifficulty, selectedAutoBalance)}
-            className="ui-enter-rise ui-enter-delay-3 mt-5 w-full cursor-pointer rounded-xl bg-gradient-to-br from-[#81f5c2] to-[#56dca6] px-4 py-3 font-bold text-[#08301f] transition hover:brightness-105"
+            className="ui-enter-rise ui-enter-delay-3 mt-5 w-full cursor-pointer rounded-xl bg-linear-to-br from-[#81f5c2] to-[#56dca6] px-4 py-3 font-bold text-[#08301f] transition hover:brightness-105"
           >
             Iniciar partida
           </button>
@@ -182,12 +182,12 @@ export function GameBoard() {
     : null;
 
   return (
-    <div className="mx-auto my-[18px] w-[94vw] max-w-[1200px] sm:my-8 sm:w-[92vw]">
-      <header className="ui-enter-rise rounded-3xl border border-[#3a6280]/65 bg-gradient-to-br from-[#163249]/88 to-[#0d2435]/92 px-4 py-[18px] shadow-[0_18px_40px_rgba(3,10,18,0.45)] sm:px-6 sm:py-[26px]">
+    <div className="mx-auto my-4.5 w-[94vw] max-w-300 sm:my-8 sm:w-[92vw]">
+      <header className="ui-enter-rise rounded-3xl border border-[#3a6280]/65 bg-linear-to-br from-[#163249]/88 to-[#0d2435]/92 px-4 py-4.5 shadow-[0_18px_40px_rgba(3,10,18,0.45)] sm:px-6 sm:py-6.5">
         <h1 className="my-2 text-[clamp(2rem,5vw,3.5rem)] leading-none">Nodele</h1>
         <div className="flex flex-wrap items-center gap-2 text-[#c8deef]">
           <p className="m-0 text-[clamp(1rem,2.6vw,1.2rem)]">Descubra os nos ocultos da arvore binaria.</p>
-          <span className="rounded-full border border-[#4e7896] bg-[#0c2437] px-2.5 py-1 text-[0.82rem] font-semibold uppercase tracking-[0.05em]">
+          <span className="rounded-full border border-[#4e7896] bg-[#0c2437] px-2.5 py-1 text-[0.82rem] font-semibold uppercase tracking-wider">
             {activeDifficulty}
           </span>
           <span className="rounded-full border border-[#4e7896] bg-[#0c2437] px-2.5 py-1 text-[0.82rem]">
@@ -199,8 +199,8 @@ export function GameBoard() {
         </div>
       </header>
 
-      <main className="mt-[18px] grid items-start gap-[18px] lg:grid-cols-[minmax(0,1.55fr)_minmax(290px,1fr)]">
-        <section className={`${panelClass} ui-enter-rise ui-enter-delay-1 flex min-h-[430px] flex-col lg:min-h-[500px]`}>
+      <main className="mt-4.5 grid items-start gap-3.5 sm:gap-4.5 lg:grid-cols-[minmax(0,1.55fr)_minmax(290px,1fr)]">
+        <section className={`${panelClass} ui-enter-rise ui-enter-delay-1 flex min-h-90 flex-col lg:min-h-125 max-sm:min-h-0`}>
           <div className={statusClass} role="status" aria-live="polite">
             {state.message}
           </div>
@@ -216,7 +216,7 @@ export function GameBoard() {
 
         </section>
 
-        <aside className="ui-enter-right ui-enter-delay-2 grid gap-[14px]">
+        <aside className="ui-enter-right ui-enter-delay-2 grid gap-3.5">
           <section className={`${panelClass} ui-enter-rise ui-enter-delay-2`}>
             <h2 className="mb-3 text-[1.08rem]">Jogada</h2>
             <GuessInput disabled={state.status === "won"} onGuess={submitGuess} />
@@ -231,14 +231,14 @@ export function GameBoard() {
             <div className="mt-2.5 grid gap-2 sm:grid-cols-2">
               <button
                 type="button"
-                className="w-full cursor-pointer rounded-xl bg-gradient-to-br from-[#81f5c2] to-[#56dca6] px-3.5 py-2.5 font-bold text-[#08301f]"
+                className="w-full cursor-pointer rounded-xl bg-linear-to-br from-[#81f5c2] to-[#56dca6] px-3.5 py-2.5 font-bold text-[#08301f] max-sm:text-[0.95rem]"
                 onClick={resetGame}
               >
                 Nova fase
               </button>
               <button
                 type="button"
-                className="w-full cursor-pointer rounded-xl border border-[#557a98] bg-[#163249] px-3.5 py-2.5 font-semibold text-[#d8e8f5]"
+                className="w-full cursor-pointer rounded-xl border border-[#557a98] bg-[#163249] px-3.5 py-2.5 font-semibold text-[#d8e8f5] max-sm:text-[0.95rem]"
                 onClick={backToMenu}
               >
                 Menu inicial

@@ -260,13 +260,13 @@ export function TreeView({
     <div
       className="mt-3.5 flex-1 rounded-[14px] border border-[#3a6280]/58 bg-linear-to-b from-[rgba(5,15,24,0.76)] to-[rgba(6,18,29,0.7)] p-2.5"
     >
-      <div className="mb-2 flex items-center justify-end gap-2">
+      <div className="mb-2 flex flex-wrap items-center justify-end gap-2 max-sm:justify-start">
         {canExport ? (
           <button
             type="button"
             onClick={exportTreeImage}
             disabled={isExporting}
-            className="mr-auto cursor-pointer rounded-lg border border-[#63a3ca] bg-[#154463] px-3 py-1.5 text-[0.8rem] font-semibold text-[#e2f0fb] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-55"
+            className="mr-auto cursor-pointer rounded-lg border border-[#63a3ca] bg-[#154463] px-3 py-1.5 text-[0.8rem] font-semibold text-[#e2f0fb] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-55 max-sm:mr-0"
           >
             {isExporting ? "Exportando..." : "Exportar imagem"}
           </button>
@@ -278,7 +278,7 @@ export function TreeView({
           aria-label="Diminuir zoom"
           onClick={decreaseZoom}
           disabled={appliedZoom <= MIN_ZOOM}
-          className="h-8 w-8 cursor-pointer rounded-lg border border-[#557a98] bg-[#123247] text-[#dbe9f4] disabled:cursor-not-allowed disabled:opacity-45"
+          className="h-8 w-8 cursor-pointer rounded-lg border border-[#557a98] bg-[#123247] text-[#dbe9f4] disabled:cursor-not-allowed disabled:opacity-45 max-sm:h-7 max-sm:w-7"
         >
           -
         </button>
@@ -287,7 +287,7 @@ export function TreeView({
           aria-label="Aumentar zoom"
           onClick={increaseZoom}
           disabled={appliedZoom >= maxAllowedZoom}
-          className="h-8 w-8 cursor-pointer rounded-lg border border-[#557a98] bg-[#123247] text-[#dbe9f4] disabled:cursor-not-allowed disabled:opacity-45"
+          className="h-8 w-8 cursor-pointer rounded-lg border border-[#557a98] bg-[#123247] text-[#dbe9f4] disabled:cursor-not-allowed disabled:opacity-45 max-sm:h-7 max-sm:w-7"
         >
           +
         </button>
@@ -296,7 +296,7 @@ export function TreeView({
           aria-label="Resetar zoom"
           onClick={resetZoom}
           disabled={appliedZoom === 1}
-          className="h-8 cursor-pointer rounded-lg border border-[#557a98] bg-[#123247] px-2.5 text-[0.76rem] font-semibold text-[#dbe9f4] disabled:cursor-not-allowed disabled:opacity-45"
+          className="h-8 cursor-pointer rounded-lg border border-[#557a98] bg-[#123247] px-2.5 text-[0.76rem] font-semibold text-[#dbe9f4] disabled:cursor-not-allowed disabled:opacity-45 max-sm:h-7"
         >
           100%
         </button>
@@ -304,7 +304,7 @@ export function TreeView({
 
       <div
         ref={containerRef}
-        className="mx-auto max-h-[68vh] overflow-auto [scrollbar-gutter:stable] cursor-grab select-none touch-none rounded-xl lg:max-h-155"
+        className="mx-auto max-h-[60vh] overflow-auto [scrollbar-gutter:stable] cursor-grab select-none touch-none rounded-xl max-sm:max-h-[56vh] sm:max-h-[68vh] lg:max-h-155"
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={endDragging}

@@ -32,7 +32,7 @@ export function GuessInput({ disabled = false, onGuess }: GuessInputProps) {
 
   return (
     <form className="grid gap-2" onSubmit={submit}>
-      <label htmlFor="guess-input" className="text-[0.95rem] text-[#d3e5f3]">
+      <label htmlFor="guess-input" className="text-[0.9rem] text-[#d3e5f3] sm:text-[0.95rem]">
         Seu palpite
       </label>
       <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto]">
@@ -43,7 +43,7 @@ export function GuessInput({ disabled = false, onGuess }: GuessInputProps) {
           min={1}
           max={99}
           step={1}
-          className="guess-number-input rounded-xl border border-[#4f7390] bg-[#071825] px-3 py-2.5 text-base text-[#e6f2fb] placeholder:text-[#88a9c0] focus:border-[#f5d56c] focus:outline-none focus:ring-3 focus:ring-[#f5d56c]/20"
+          className="guess-number-input w-full rounded-xl border border-[#4f7390] bg-[#071825] px-3 py-2.5 text-base text-[#e6f2fb] placeholder:text-[#88a9c0] focus:border-[#f5d56c] focus:outline-none focus:ring-3 focus:ring-[#f5d56c]/20"
           placeholder="Ex.: 30"
           value={value}
           onChange={(event) => setValue(event.target.value)}
@@ -52,7 +52,7 @@ export function GuessInput({ disabled = false, onGuess }: GuessInputProps) {
         />
         <button
           type="submit"
-          className="cursor-pointer rounded-xl bg-gradient-to-br from-[#f5d56c] to-[#f0b63f] px-4 py-2.5 font-bold text-[#102434] transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-50"
+          className="w-full cursor-pointer rounded-xl bg-linear-to-br from-[#f5d56c] to-[#f0b63f] px-4 py-2.5 font-bold text-[#102434] transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
           disabled={disabled}
         >
           Inserir
