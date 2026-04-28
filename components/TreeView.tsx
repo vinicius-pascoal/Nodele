@@ -99,11 +99,12 @@ export function TreeView({
 
     const observer = new ResizeObserver((entries) => {
       const [entry] = entries;
-      setContainerWidth(entry.contentRect.width);
+      const nextWidth = Math.round(entry.contentRect.width);
+      setContainerWidth((current) => (current === nextWidth ? current : nextWidth));
     });
 
     observer.observe(element);
-    setContainerWidth(element.clientWidth);
+    setContainerWidth(Math.round(element.clientWidth));
 
     return () => observer.disconnect();
   }, []);
@@ -299,7 +300,7 @@ export function TreeView({
 
       <div
         ref={containerRef}
-        className="mx-auto max-h-[68vh] overflow-auto cursor-grab select-none touch-none rounded-[12px] lg:max-h-[620px]"
+        className="mx-auto max-h-[68vh] overflow-auto [scrollbar-gutter:stable] cursor-grab select-none touch-none rounded-[12px] lg:max-h-[620px]"
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={endDragging}
