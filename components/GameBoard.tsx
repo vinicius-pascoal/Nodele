@@ -47,9 +47,15 @@ function LanguageSelect() {
         onChange={(event) => setLocale(event.target.value as Locale)}
         className="rounded-xl border border-[#4e7896] bg-[#0c2437] px-3 py-2 text-[0.9rem] font-semibold text-[#e8f1f7] outline-none transition focus:border-[#f5d56c]"
       >
-        <option value="pt">{localeLabels.pt}</option>
-        <option value="en">{localeLabels.en}</option>
-        <option value="es">{localeLabels.es}</option>
+        <option value="pt">
+          {localeLabels.pt.flag} {localeLabels.pt.code}
+        </option>
+        <option value="en">
+          {localeLabels.en.flag} {localeLabels.en.code}
+        </option>
+        <option value="es">
+          {localeLabels.es.flag} {localeLabels.es.code}
+        </option>
       </select>
     </label>
   );

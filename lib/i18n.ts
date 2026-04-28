@@ -4,10 +4,19 @@ export type Locale = (typeof locales)[number];
 
 export const defaultLocale: Locale = "pt";
 
-export const localeLabels: Record<Locale, string> = {
-  pt: "Português",
-  en: "English",
-  es: "Español",
+export const localeLabels: Record<Locale, { code: string; flag: string }> = {
+  pt: {
+    code: "PT",
+    flag: "🇧🇷",
+  },
+  en: {
+    code: "EN",
+    flag: "🇺🇸",
+  },
+  es: {
+    code: "ES",
+    flag: "🇪🇸",
+  },
 };
 
 const htmlLangByLocale: Record<Locale, string> = {
