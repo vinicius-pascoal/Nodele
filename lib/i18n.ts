@@ -80,7 +80,7 @@ const translations = {
       fixed: "Nó sólido: valor oficial da solução",
       hidden: "Nó oculto: precisa ser revelado com o valor certo",
       ghost: "Nó fantasma: palpite incorreto inserido na BST",
-      allowedRange: "Valores permitidos para palpites: de 1 a 99.",
+      allowedRange: (maxValue: number) => `Valores permitidos para palpites: de 1 a ${maxValue}.`,
       treeLogic: "Lógica da árvore: valores menores que o nó atual vão para a esquerda, e valores maiores vão para a direita.",
     },
     tree: {
@@ -162,7 +162,7 @@ const translations = {
       fixed: "Solid node: official solution value",
       hidden: "Hidden node: must be revealed with the correct value",
       ghost: "Ghost node: wrong guess inserted into the BST",
-      allowedRange: "Allowed guess values: 1 to 99.",
+      allowedRange: (maxValue: number) => `Allowed guess values: 1 to ${maxValue}.`,
       treeLogic: "Tree logic: values smaller than the current node go left, and larger values go right.",
     },
     tree: {
@@ -244,7 +244,7 @@ const translations = {
       fixed: "Nodo sólido: valor oficial de la solución",
       hidden: "Nodo oculto: debe revelarse con el valor correcto",
       ghost: "Nodo fantasma: intento incorrecto insertado en el BST",
-      allowedRange: "Valores permitidos para intentar: de 1 a 99.",
+      allowedRange: (maxValue: number) => `Valores permitidos para intentar: de 1 a ${maxValue}.`,
       treeLogic: "Lógica del árbol: los valores menores que el nodo actual van a la izquierda, y los mayores a la derecha.",
     },
     tree: {

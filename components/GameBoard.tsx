@@ -5,6 +5,7 @@ import { GameLegend } from "@/components/GameLegend";
 import { GuessInput } from "@/components/GuessInput";
 import { useLanguage } from "@/components/LanguageProvider";
 import { TreeView } from "@/components/TreeView";
+import { getDifficultyMaxValue } from "@/lib/challenges";
 import { countUnrevealedHiddenNodes } from "@/lib/tree";
 import { createInitialGameState, processGuess } from "@/lib/game";
 import { localeLabels } from "@/lib/i18n";
@@ -209,6 +210,7 @@ export function GameBoard() {
   const lastGuess = state.guesses[state.guesses.length - 1] ?? null;
   const canHighlight = lastGuess?.result === "revealed" || lastGuess?.result === "ghost";
   const remainingHidden = countUnrevealedHiddenNodes(state.tree);
+  const maxGuessValue = getDifficultyMaxValue(activeDifficulty ?? selectedDifficulty);
 
   const submitGuess = (value: number) => {
     setState((current) => {
@@ -280,12 +282,12 @@ export function GameBoard() {
         <aside className="ui-enter-right ui-enter-delay-2 grid gap-3.5">
           <section className={`${panelClass} ui-enter-rise ui-enter-delay-2`}>
             <h2 className="mb-3 text-[1.08rem]">{t.app.moveTitle}</h2>
-            <GuessInput disabled={state.status === "won"} onGuess={submitGuess} />
+            <GuessInput disabled={state.status === "won"} maxValue={maxGuessValue} onGuess={submitGuess} />
           </section>
 
           <section className={`${panelClass} ui-enter-rise ui-enter-delay-3`}>
             <h2 className="mb-3 text-[1.08rem]">{t.app.legendTitle}</h2>
-            <GameLegend />
+            <GameLegend maxValue={maxGuessValue} />
           </section>
 
           <section className={`${panelClass} ui-enter-rise ui-enter-delay-4`}>
