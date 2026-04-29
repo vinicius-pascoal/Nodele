@@ -3,6 +3,7 @@ import type { GameDifficulty, TreeNode } from "@/types/game";
 type DifficultyConfig = {
   totalNodes: number;
   hiddenNodes: number;
+  maxValue: number;
   includeRootInHidden?: boolean;
 };
 
@@ -10,18 +11,22 @@ const difficultyConfig: Record<GameDifficulty, DifficultyConfig> = {
   easy: {
     totalNodes: 7,
     hiddenNodes: 2,
+    maxValue: 30,
   },
   medium: {
     totalNodes: 9,
     hiddenNodes: 4,
+    maxValue: 60,
   },
   hard: {
     totalNodes: 11,
     hiddenNodes: 6,
+    maxValue: 100,
   },
   brutal: {
     totalNodes: 8,
     hiddenNodes: 8,
+    maxValue: 500,
     includeRootInHidden: true,
   },
 };
@@ -30,11 +35,11 @@ function randomInt(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function pickUniqueValues(count: number): number[] {
+function pickUniqueValues(count: number, maxValue: number): number[] {
   const values = new Set<number>();
 
   while (values.size < count) {
-    values.add(randomInt(1, 99));
+    values.add(randomInt(1, maxValue));
   }
 
   return [...values];
@@ -116,7 +121,7 @@ function applyHiddenNodes(node: TreeNode | null, hiddenIds: Set<string>): TreeNo
 
 export function createRandomChallenge(difficulty: GameDifficulty): TreeNode {
   const config = difficultyConfig[difficulty];
-  const ordered = shuffle(pickUniqueValues(config.totalNodes));
+  const ordered = shuffle(pickUniqueValues(config.totalNodes, config.maxValue));
 
   const baseTree = ordered.reduce<TreeNode | null>((tree, value) => insertBst(tree, value), null);
 
